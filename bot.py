@@ -1,7 +1,6 @@
 import asyncio
 import sqlite3
 import logging
-import re
 from datetime import datetime
 import pytz
 from io import BytesIO
@@ -17,11 +16,12 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import CommandStart, Command
 
 # ================== SOZLAMALAR ==================
-BOT_TOKEN = "8775591302:AAFiY_Bb98lgvZCvGnNpSgbUOlbIFHooZe8"
-ADMIN_ID = 8537782289  # Yangi Admin ID
-MAIN_CHANNEL_ID = "@Azizbekl2026" # Yangi kanal
+BOT_TOKEN = "8238302696:AAEoQ2Bvk_g0JsL5Om4OQmboLc8ZtmY1b0c"
+ADMIN_ID = 8284924038  # Yangi Admin ID
+MAIN_CHANNEL_ID = "@sevaraakkk" # Yangi kanal
 # ================================================
 
+# ================== BAZA SOZLAMALARI ==================
 DB_NAME = "bot_data.db"
 
 def init_db():
@@ -36,6 +36,7 @@ def init_db():
         c.execute('''CREATE TABLE IF NOT EXISTS ads 
                      (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, video_id TEXT, text TEXT, status TEXT DEFAULT 'pending')''')
         
+        # Boshlang'ich sozlamalar
         c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('price', '50000')")
         c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('card', '8600 0000 0000 0000 (Ism Familiya)')")
         c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('start_msg', 'Salom {name}! Siz bu botdan PUBG Mobile akkauntingizni obzorini joylashingiz mumkin va u video kanalga joylanadi.')")
@@ -52,6 +53,7 @@ def db_query(query, params=(), fetchone=False, fetchall=False):
 
 init_db()
 
+# ================== FSM HOLATLAR ==================
 class AdForm(StatesGroup):
     video = State()
     level = State()
@@ -76,10 +78,12 @@ class AdminForm(StatesGroup):
     add_channel_url = State()
     reply_msg = State()
 
+# ================== BOT VA ROUTER ==================
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 router = Router()
 
+# ================== YORDAMCHI FUNKSIYALAR ==================
 def get_time_tashkent():
     tz = pytz.timezone('Asia/Tashkent')
     return datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
@@ -97,19 +101,21 @@ async def check_subscription(user_id):
             if member.status in['left', 'kicked']:
                 unsubbed.append(url)
         except:
-            pass 
+            pass # Kanal topilmadi yoki bot admin emas
     return unsubbed
 
 def get_main_menu():
+    # Chatdagi (Reply) tugmalarni rangli qilish
     kb = ReplyKeyboardMarkup(
         keyboard=[[
-            KeyboardButton(text="📝 E'lon berish"), 
-            KeyboardButton(text="🆘 Yordam")
+            KeyboardButton(text="📝 E'lon berish", **{"style": "primary"}), 
+            KeyboardButton(text="🆘 Yordam", **{"style": "danger"})
         ]], 
         resize_keyboard=True
     )
     return kb
 
+# ================== START VA OBUNA ==================
 @router.message(CommandStart())
 async def start_cmd(message: Message, state: FSMContext):
     await state.clear()
@@ -120,8 +126,8 @@ async def start_cmd(message: Message, state: FSMContext):
     
     unsubbed = await check_subscription(message.from_user.id)
     if unsubbed:
-        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f"Kanal {i+1}", url=url)] for i, url in enumerate(unsubbed)
-        ] + [[InlineKeyboardButton(text="🟩 Tasdiqlash", callback_data="check_sub")]])
+        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f"Kanal {i+1}", url=url, **{"style": "primary"})] for i, url in enumerate(unsubbed)
+        ] + [[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="check_sub", **{"style": "success"})]])
         await message.answer("Botdan foydalanish uchun quyidagi kanallarga obuna bo'ling:", reply_markup=btn)
         return
 
@@ -138,6 +144,7 @@ async def check_sub_cb(call: CallbackQuery):
         start_text = get_setting('start_msg').replace("{name}", call.from_user.full_name)
         await call.message.answer(f"Rahmat! Obuna tasdiqlandi.\n\n{start_text}", reply_markup=get_main_menu())
 
+# ================== E'LON BERISH (USER) ==================
 @router.message(F.text == "📝 E'lon berish")
 async def start_ad(message: Message, state: FSMContext):
     unsubbed = await check_subscription(message.from_user.id)
@@ -148,9 +155,10 @@ async def start_ad(message: Message, state: FSMContext):
     user = db_query("SELECT posted_ads, paid_slots FROM users WHERE user_id=?", (message.from_user.id,), fetchone=True)
     posted, paid = user[0], user[1]
     
+    # Bepul limit: 1 ta.
     if posted >= (1 + paid):
         price = get_setting('price')
-        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="💳 To'lov qilish", callback_data="pay_ad")]])
+        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="💳 To'lov qilish", callback_data="pay_ad", **{"style": "primary"})]])
         await message.answer(f"Sizning bepul e'lonlar limitingiz tugagan. \n"
                              f"1-video bepul, 2-sidan boshlab pullik.\n"
                              f"E'lon narxi: {price} so'm.", reply_markup=btn)
@@ -169,8 +177,8 @@ async def pay_ad_cb(call: CallbackQuery, state: FSMContext):
 @router.message(PaymentForm.receipt, F.photo)
 async def get_receipt(message: Message, state: FSMContext):
     photo_id = message.photo[-1].file_id
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="🟩 Tasdiqlash", callback_data=f"app_pay_{message.from_user.id}"),
-          InlineKeyboardButton(text="🟥 Bekor qilish", callback_data=f"rej_pay_{message.from_user.id}")]
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"app_pay_{message.from_user.id}", **{"style": "success"}),
+         InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_pay_{message.from_user.id}", **{"style": "danger"})]
     ])
     await bot.send_photo(ADMIN_ID, photo_id, caption=f"Yangi to'lov cheki.\nFoydalanuvchi: {message.from_user.full_name} (@{message.from_user.username})\nID: {message.from_user.id}", reply_markup=btn)
     await message.answer("Chek adminga yuborildi. Tasdiqlanishini kuting.")
@@ -238,46 +246,13 @@ async def get_phone(message: Message, state: FSMContext):
     ad_id = db_query("INSERT INTO ads (user_id, video_id, text) VALUES (?, ?, ?)", 
                      (message.from_user.id, data['video'], text))
     
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="🟩 Tasdiqlash", callback_data=f"app_ad_{ad_id}"),
-          InlineKeyboardButton(text="🟥 Bekor qilish", callback_data=f"rej_ad_{ad_id}")]
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"app_ad_{ad_id}", **{"style": "success"}),
+         InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_ad_{ad_id}", **{"style": "danger"})]
     ])
     
     await bot.send_video(ADMIN_ID, video=data['video'], caption=text + f"\n\n👤 Sotuvchi: {message.from_user.full_name} (ID: {message.from_user.id})", reply_markup=btn)
     await message.answer("Ma'lumotlaringiz adminga yuborildi. Tasdiqlanganidan so'ng kanalga joylanadi.")
     await state.clear()
-
-# ================== SAYTDAN KELADIGANLARNI QABUL QILISH ==================
-@router.callback_query(F.data == "webad_ok")
-async def web_approve_ad(call: CallbackQuery):
-    # Saytdan kelgan videoni ushlab olamiz
-    video_id = call.message.video.file_id
-    caption = call.message.caption or ""
-    me = await bot.get_me()
-    
-    # Username'ni regex orqali matn ichidan qidiramiz
-    match = re.search(r"👤 Sotuvchi:\s*@(\w+)", caption)
-    username = match.group(1) if match else "SHIRINA_10K" # Agar username topilmasa
-    
-    # Kanal uchun yangi knopkalar
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="👤 Sotuvchi bilan aloqa", url=f"https://t.me/{username}")],[InlineKeyboardButton(text="📢 Reklama berish", url=f"https://t.me/{me.username}?start=ad")]
-    ])
-    
-    # Kanalga yuborish
-    await bot.send_video(MAIN_CHANNEL_ID, video=video_id, caption=caption, reply_markup=btn)
-    # Admin xabarini o'zgartirish
-    await call.message.edit_caption(caption=caption + "\n\n✅ KANALGA JOYLANDI")
-
-@router.callback_query(F.data == "webad_no")
-async def web_reject_ad(call: CallbackQuery):
-    await call.message.edit_caption(caption=call.message.caption + "\n\n❌ BEKOR QILINGAN")
-
-@router.callback_query(F.data == "webpay_ok")
-async def web_approve_pay(call: CallbackQuery):
-    await call.message.edit_caption(caption=call.message.caption + "\n\n✅ TASDIQLANGAN")
-
-@router.callback_query(F.data == "webpay_no")
-async def web_reject_pay(call: CallbackQuery):
-    await call.message.edit_caption(caption=call.message.caption + "\n\n❌ BEKOR QILINGAN")
 
 # ================== YORDAM (SUPPORT) ==================
 @router.message(F.text == "🆘 Yordam")
@@ -287,12 +262,12 @@ async def help_cmd(message: Message, state: FSMContext):
 
 @router.message(SupportForm.msg)
 async def send_support(message: Message, state: FSMContext):
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="↩️ Javob yozish", callback_data=f"reply_{message.from_user.id}")]])
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="↩️ Javob yozish", callback_data=f"reply_{message.from_user.id}", **{"style": "primary"})]])
     await bot.send_message(ADMIN_ID, f"📩 Yangi xabar!\nKimdan: {message.from_user.full_name} (ID: {message.from_user.id})\n\nXabar: {message.text}", reply_markup=btn)
     await message.answer("Xabaringiz adminga yetkazildi.")
     await state.clear()
 
-# ================== ADMIN CALLBACKLAR (Bot E'lonlar) ==================
+# ================== ADMIN CALLBACKLAR ==================
 @router.callback_query(F.data.startswith("app_pay_"))
 async def approve_pay(call: CallbackQuery):
     user_id = int(call.data.split("_")[2])
@@ -314,7 +289,24 @@ async def approve_ad(call: CallbackQuery):
         user_id, video_id, text = ad
         me = await bot.get_me()
         
-        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="👤 Sotuvchi bilan aloqa", url=f"tg://user?id={user_id}")],[InlineKeyboardButton(text="📢 Reklama berish", url=f"https://t.me/{me.username}?start=ad")]
+        # === INLINE RANG TANLASH ===
+        styles =["primary", "danger", "success"]
+        current_style = styles[ad_id % 3] 
+        next_style = styles[(ad_id + 1) % 3] 
+        
+        btn = InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(
+                    text="👤 Sotuvchi bilan aloqa", 
+                    url=f"tg://user?id={user_id}",
+                    **{"style": current_style} 
+                )
+            ],[
+                InlineKeyboardButton(
+                    text="📢 Reklama berish", 
+                    url=f"https://t.me/{me.username}?start=ad",
+                    **{"style": next_style} 
+                )
+            ]
         ])
         
         await bot.send_video(MAIN_CHANNEL_ID, video=video_id, caption=text, reply_markup=btn)
@@ -347,12 +339,48 @@ async def send_reply(message: Message, state: FSMContext):
     await message.answer("Javob yuborildi.")
     await state.clear()
 
+# ================== SAYTDAN KELADIGANLARNI QABUL QILISH ==================
+@router.callback_query(F.data == "webad_ok")
+async def web_approve_ad(call: CallbackQuery):
+    video_id = call.message.video.file_id
+    caption = call.message.caption or ""
+    me = await bot.get_me()
+    
+    match = re.search(r"👤 Sotuvchi:\s*@(\w+)", caption)
+    username = match.group(1) if match else "SHIRINA_10K" 
+    
+    # Kanal uchun yangi knopkalar
+    btn = InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text="👤 Sotuvchi bilan aloqa", url=f"https://t.me/{username}", **{"style": "success"})
+    ],[
+        InlineKeyboardButton(text="📢 Reklama berish", url=f"https://t.me/{me.username}?start=ad", **{"style": "primary"})
+    ]])
+    
+    await bot.send_video(MAIN_CHANNEL_ID, video=video_id, caption=caption, reply_markup=btn)
+    await call.message.edit_caption(caption=caption + "\n\n✅ KANALGA JOYLANDI")
+
+@router.callback_query(F.data == "webad_no")
+async def web_reject_ad(call: CallbackQuery):
+    await call.message.edit_caption(caption=call.message.caption + "\n\n❌ BEKOR QILINGAN")
+
+@router.callback_query(F.data == "webpay_ok")
+async def web_approve_pay(call: CallbackQuery):
+    await call.message.edit_caption(caption=call.message.caption + "\n\n✅ TASDIQLANGAN")
+
+@router.callback_query(F.data == "webpay_no")
+async def web_reject_pay(call: CallbackQuery):
+    await call.message.edit_caption(caption=call.message.caption + "\n\n❌ BEKOR QILINGAN")
+
 # ================== ADMIN PANEL ==================
 @router.message(Command("admin"), F.from_user.id == ADMIN_ID)
 async def admin_panel(message: Message):
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="📊 Statistika (Rasmli)", callback_data="admin_stats")],[InlineKeyboardButton(text="💰 Narxni o'zgartirish", callback_data="admin_price"),
-         InlineKeyboardButton(text="💳 Kartani o'zgartirish", callback_data="admin_card")],[InlineKeyboardButton(text="📝 Start xabarni o'zgarish", callback_data="admin_startmsg")],[InlineKeyboardButton(text="➕ Kanal qo'shish", callback_data="admin_add_ch"),
-         InlineKeyboardButton(text="➖ Kanal o'chirish", callback_data="admin_del_ch")]
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="📊 Statistika (Rasmli)", callback_data="admin_stats", **{"style": "primary"})],[
+            InlineKeyboardButton(text="💰 Narxni o'zgartirish", callback_data="admin_price", **{"style": "success"}),
+            InlineKeyboardButton(text="💳 Kartani o'zgartirish", callback_data="admin_card", **{"style": "success"})
+        ],[InlineKeyboardButton(text="📝 Start xabarni o'zgarish", callback_data="admin_startmsg", **{"style": "primary"})],[
+            InlineKeyboardButton(text="➕ Kanal qo'shish", callback_data="admin_add_ch", **{"style": "success"}),
+            InlineKeyboardButton(text="➖ Kanal o'chirish", callback_data="admin_del_ch", **{"style": "danger"})
+        ]
     ])
     await message.answer("Admin panelga xush kelibsiz!", reply_markup=btn)
 
@@ -413,7 +441,7 @@ async def del_ch_step(call: CallbackQuery):
     if not channels:
         await call.message.answer("Kanallar yo'q.")
         return
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}")] for ch in channels
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}", **{"style": "danger"})] for ch in channels
     ])
     await call.message.answer("Qaysi kanalni o'chirasiz?", reply_markup=btn)
 
@@ -476,6 +504,7 @@ async def send_stats_img(call: CallbackQuery):
     await bot.send_photo(call.from_user.id, photo=file, caption="📈 Botning to'liq statistikasi (TOP 30 foydalanuvchi)")
     await call.answer()
 
+# ================== ASOSIY ISHGA TUSHIRISH ==================
 async def main():
     dp.include_router(router)
     print("Bot ishga tushdi...")
