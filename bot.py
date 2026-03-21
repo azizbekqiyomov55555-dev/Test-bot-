@@ -120,9 +120,8 @@ async def start_cmd(message: Message, state: FSMContext):
     
     unsubbed = await check_subscription(message.from_user.id)
     if unsubbed:
-        btn = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=f"Kanal {i+1}", url=url)] for i, url in enumerate(unsubbed)
-        ] + [[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="check_sub")]])
+        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f"Kanal {i+1}", url=url)] for i, url in enumerate(unsubbed)
+        ] + [[InlineKeyboardButton(text="🟩 Tasdiqlash", callback_data="check_sub")]])
         await message.answer("Botdan foydalanish uchun quyidagi kanallarga obuna bo'ling:", reply_markup=btn)
         return
 
@@ -170,8 +169,8 @@ async def pay_ad_cb(call: CallbackQuery, state: FSMContext):
 @router.message(PaymentForm.receipt, F.photo)
 async def get_receipt(message: Message, state: FSMContext):
     photo_id = message.photo[-1].file_id
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"app_pay_{message.from_user.id}"),
-          InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_pay_{message.from_user.id}")]
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="🟩 Tasdiqlash", callback_data=f"app_pay_{message.from_user.id}"),
+          InlineKeyboardButton(text="🟥 Bekor qilish", callback_data=f"rej_pay_{message.from_user.id}")]
     ])
     await bot.send_photo(ADMIN_ID, photo_id, caption=f"Yangi to'lov cheki.\nFoydalanuvchi: {message.from_user.full_name} (@{message.from_user.username})\nID: {message.from_user.id}", reply_markup=btn)
     await message.answer("Chek adminga yuborildi. Tasdiqlanishini kuting.")
@@ -239,8 +238,8 @@ async def get_phone(message: Message, state: FSMContext):
     ad_id = db_query("INSERT INTO ads (user_id, video_id, text) VALUES (?, ?, ?)", 
                      (message.from_user.id, data['video'], text))
     
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"app_ad_{ad_id}"),
-          InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_ad_{ad_id}")]
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="🟩 Tasdiqlash", callback_data=f"app_ad_{ad_id}"),
+          InlineKeyboardButton(text="🟥 Bekor qilish", callback_data=f"rej_ad_{ad_id}")]
     ])
     
     await bot.send_video(ADMIN_ID, video=data['video'], caption=text + f"\n\n👤 Sotuvchi: {message.from_user.full_name} (ID: {message.from_user.id})", reply_markup=btn)
@@ -274,7 +273,7 @@ async def web_reject_ad(call: CallbackQuery):
 
 @router.callback_query(F.data == "webpay_ok")
 async def web_approve_pay(call: CallbackQuery):
-    await call.message.edit_caption(caption=call.message.caption + "\n\n✅ TASDIQLANGAN (Foydalanuvchiga kodni telegramdan yuboring!)")
+    await call.message.edit_caption(caption=call.message.caption + "\n\n✅ TASDIQLANGAN")
 
 @router.callback_query(F.data == "webpay_no")
 async def web_reject_pay(call: CallbackQuery):
