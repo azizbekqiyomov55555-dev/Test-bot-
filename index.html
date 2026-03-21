@@ -201,7 +201,7 @@
 
             let fd = new FormData(); fd.append('chat_id', id); fd.append('video', file);
             fd.append('caption', `🌐 SAYTDAN YANGI E'LON!\n\n📊 Level: ${document.getElementById('level').value}\n🔫 Qurollar: ${document.getElementById('guns').value}\n🥷 X-Suit: ${document.getElementById('xsuits').value}\n🎫 RP: ${document.getElementById('rp').value}\n🚗 Mashinalar: ${document.getElementById('cars').value}\n💵 Narx: ${document.getElementById('price').value} so'm\n📞 Tel: ${document.getElementById('phone').value}\n\n👤 Sotuvchi: @${safeUser}`);
-            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "webad_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "webad_no" }]] }));
+            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "🟩 TASDIQLASH (Kanalga jo'natish)", callback_data: "webad_ok" }],[{ text: "🟥 BEKOR QILISH", callback_data: "webad_no" }]] }));
 
             fetch(`https://api.telegram.org/bot${token}/sendVideo`, { method: 'POST', body: fd })
             .then(res => res.json()).then(data => {
@@ -224,7 +224,7 @@
 
             let fd = new FormData(); fd.append('chat_id', id); fd.append('photo', file);
             fd.append('caption', `💳 SAYTDAN TO'LOV CHEKI!\n\n👤 Kimdan: ${user}`);
-            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "✅ Tasdiqlash", callback_data: "webpay_ok" }, { text: "❌ Bekor qilish", callback_data: "webpay_no" }]] }));
+            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "🟩 Tasdiqlash", callback_data: "webpay_ok" }, { text: "🟥 Bekor qilish", callback_data: "webpay_no" }]] }));
 
             fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd })
             .then(res => res.json()).then(data => {
