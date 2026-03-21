@@ -106,10 +106,12 @@ async def check_subscription(user_id):
     return unsubbed
 
 def get_main_menu():
-    # Tugmalar yonma-yon bo'lishi uchun 1 ta ro'yxat (qator) ichiga olingan
+    # Chatdagi (Reply) tugmalarni rangli qilish (API 9.4)
     kb = ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="📝 E'lon berish"), KeyboardButton(text="🆘 Yordam")]
-        ], 
+        keyboard=[[
+            KeyboardButton(text="📝 E'lon berish", **{"style": "primary"}), 
+            KeyboardButton(text="🆘 Yordam", **{"style": "danger"})
+        ]], 
         resize_keyboard=True
     )
     return kb
@@ -231,7 +233,6 @@ async def get_phone(message: Message, state: FSMContext):
     data = await state.get_data()
     me = await bot.get_me() # Botni yuzernaymini olish uchun
     
-    # E'lon yozuvining eng tagida admin va bot qo'shilgan formati
     text = (f"🎮 Yangi Akkaunt Sotuvda!\n\n"
             f"📊 Level: {data['level']}\n"
             f"🔫 Qurollar: {data['guns']} ta\n"
@@ -290,10 +291,10 @@ async def approve_ad(call: CallbackQuery):
         user_id, video_id, text = ad
         me = await bot.get_me()
         
-        # === RANG TANLASH VA IKKITA TUGMA QO'SHISH ===
+        # === INLINE RANG TANLASH ===
         styles =["primary", "danger", "success"]
-        current_style = styles[ad_id % 3] # Birinchi tugma uchun
-        next_style = styles[(ad_id + 1) % 3] # Ikkinchi tugma uchun
+        current_style = styles[ad_id % 3] 
+        next_style = styles[(ad_id + 1) % 3] 
         
         btn = InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(
@@ -302,7 +303,6 @@ async def approve_ad(call: CallbackQuery):
                     **{"style": current_style} 
                 )
             ],[
-                # "Reklama berish" tugmasi botning o'ziga olib o'tadi
                 InlineKeyboardButton(
                     text="📢 Reklama berish", 
                     url=f"https://t.me/{me.username}?start=ad",
@@ -407,8 +407,7 @@ async def del_ch_step(call: CallbackQuery):
     if not channels:
         await call.message.answer("Kanallar yo'q.")
         return
-    btn = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}")] for ch in channels
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}")] for ch in channels
     ])
     await call.message.answer("Qaysi kanalni o'chirasiz?", reply_markup=btn)
 
