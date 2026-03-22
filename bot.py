@@ -463,7 +463,7 @@ async def approve_web_pay(call: CallbackQuery):
                 unlock_url = f"{site_url}?code={code}"
                 markup = InlineKeyboardMarkup(inline_keyboard=[[
                     InlineKeyboardButton(
-                        text="📝 Saytga kirib e'lon joylash",
+                        text="📝 shu yerni bosib kodni kiriting",
                         web_app=WebAppInfo(url=unlock_url)
                     )
                 ]])
