@@ -2,463 +2,402 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUBG Mobile - Premium Akkaunt Joylash</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UC SOTIB OLISH - PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Montserrat:wght@400;600;800&display=swap');
-        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #fff; overflow-x: hidden; }
-        .pubg-font { font-family: 'Teko', sans-serif; letter-spacing: 2px; }
-        .radar-bg { position: fixed; top: 50%; left: 50%; width: 150vw; height: 150vw; transform: translate(-50%, -50%); background: linear-gradient(90deg, rgba(234,179,8,.03) 1px, transparent 1px) 0 0, linear-gradient(rgba(234,179,8,.03) 1px, transparent 1px) 0 0; background-size: 40px 40px; border-radius: 50%; pointer-events: none; z-index: -1; animation: radarPulse 10s infinite linear; }
-        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: conic-gradient(from 0deg, transparent 70%, rgba(234,179,8,.4) 100%); transform-origin: 0 0; animation: radarSpin 4s infinite linear; }
-        @keyframes radarSpin { 100% { transform: rotate(360deg); } }
-        @keyframes radarPulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5}50%{transform:translate(-50%,-50%) scale(1.05);opacity:.8} }
-        .gaming-input-wrapper { background: rgba(20,20,20,.8); border: 2px solid #222; border-left: 4px solid #ca8a04; transition: all .3s; backdrop-filter: blur(5px); }
-        .gaming-input-wrapper:focus-within { border-color:#eab308; border-left-width:8px; box-shadow:0 0 15px rgba(234,179,8,.2); transform:scale(1.02); }
-        .gaming-input { width:100%; padding:12px 16px; background:transparent; border:none; outline:none; color:#fff; font-weight:600; font-size:.9rem; }
-        .btn-pubg { background:linear-gradient(135deg,#a16207 0%,#eab308 100%); border:none; text-transform:uppercase; clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px); transition:all .2s; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:.75rem; }
-        .btn-pubg:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 10px 20px rgba(234,179,8,.4); }
-        .btn-pubg:active { transform:translateY(2px) scale(.98); }
-        .file-upload-wrapper { border:2px dashed #ca8a04; background:rgba(234,179,8,.05); transition:all .3s; cursor:pointer; }
-        .file-upload-wrapper:hover { background:rgba(234,179,8,.1); border-color:#fef08a; }
-        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:#eab308}
-        .loader { width:24px;height:24px;border:3px solid #eab308;border-radius:50%;position:relative;animation:pulse 1s infinite alternate;display:inline-block;flex-shrink:0; }
-        .loader::before{content:'';position:absolute;background:#eab308;width:100%;height:2px;top:50%;left:0;transform:translateY(-50%)}
-        .loader::after{content:'';position:absolute;background:#eab308;height:100%;width:2px;left:50%;top:0;transform:translateX(-50%)}
-        @keyframes pulse{0%{transform:scale(.8)}100%{transform:scale(1.2);box-shadow:0 0 15px rgba(234,179,8,.8)}}
-        .card { clip-path:polygon(30px 0,100% 0,100% calc(100% - 30px),calc(100% - 30px) 100%,0 100%,0 30px); }
-        .code-inputs { display:flex; gap:10px; justify-content:center; }
-        .code-input { width:50px; height:60px; background:rgba(234,179,8,.08); border:2px solid #ca8a04; color:#fef08a; text-align:center; font-size:1.8rem; font-weight:800; outline:none; transition:all .3s; border-radius:4px; }
-        .code-input:focus { border-color:#eab308; box-shadow:0 0 20px rgba(234,179,8,.4); background:rgba(234,179,8,.15); }
-        .code-input.filled { border-color:#22c55e; color:#fff; background:rgba(34,197,94,.1); }
-        .copy-btn { background:rgba(234,179,8,.15); border:1px solid #ca8a04; color:#eab308; padding:6px 12px; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all .2s; border-radius:4px; }
-        .copy-btn:hover { background:rgba(234,179,8,.3); }
-        .copy-btn.copied { background:rgba(34,197,94,.2); border-color:#22c55e; color:#22c55e; }
+        body {
+            background: linear-gradient(-45deg, #050507, #1a0b2e, #0a1128, #001f3f);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; overflow-x: hidden;
+        }
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .glass-panel {
+            background: rgba(11, 12, 16, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .profile-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            margin-top: 40px; margin-bottom: 40px; animation: fadeInDown 1s ease-out; text-align: center;
+        }
+        .profile-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #00f2fe; object-fit: cover; box-shadow: 0 0 20px rgba(0, 242, 254, 0.6); transition: transform 0.3s; }
+        .profile-img:hover { transform: scale(1.1) rotate(5deg); }
+        .profile-name { color: #a8ff78; font-size: 24px; font-weight: 900; letter-spacing: 1px; text-shadow: 0 0 15px rgba(168, 255, 120, 0.6); line-height: 1.3; }
+
+        .custom-btn {
+            background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(5px); width: 100%; max-width: 350px;
+            margin: 0 auto 25px auto; padding: 22px 0; border-radius: 14px; text-align: center; font-size: 22px;
+            font-weight: 900; letter-spacing: 1px; color: #ffffff; position: relative; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); transition: transform 0.1s, box-shadow 0.3s; overflow: hidden;
+        }
+        .custom-btn:hover { box-shadow: 0 0 25px rgba(0, 191, 255, 0.5); }
+        .custom-btn:active { transform: scale(0.95); }
+
+        .btn-line { position: absolute; height: 4px; left: 15%; right: 15%; border-radius: 5px; background: linear-gradient(90deg, #ff007a, #8a2be2, #00bfff, #00ff88, #ff007a); background-size: 300% 100%; animation: run-light 1.5s linear infinite; }
+        .line-top { top: 0; } .line-bottom { bottom: 0; animation-direction: reverse; }
+        @keyframes run-light { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+        .social-container { display: flex; justify-content: center; gap: 20px; margin-top: 40px; animation: fadeInUp 1s ease-out; }
+        .social-btn { position: relative; width: 75px; height: 75px; background-color: #0b0c10; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #ffffff; z-index: 1; text-decoration: none; transition: transform 0.2s; }
+        .social-btn:hover { transform: translateY(-5px) scale(1.05); }
+        .social-btn::before { content: ""; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px; background: linear-gradient(135deg, #00ff88, #00bfff, #8a2be2, #ff007a, #ff8a00, #00ff88); background-size: 400% 400%; border-radius: 23px; z-index: -1; animation: border-run 3s linear infinite; }
+        @keyframes border-run { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .dark-input { background: rgba(11, 12, 16, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); color: white; transition: 0.3s; }
+        .dark-input:focus { border-color: #00bfff; outline: none; box-shadow: 0 0 15px rgba(0,191,255,0.4); background: rgba(11, 12, 16, 0.8); }
+        
+        .uc-box { background: rgba(11, 12, 16, 0.5); border: 2px solid rgba(255,255,255,0.1); transition: all 0.3s; cursor: pointer; }
+        .uc-box:hover { transform: translateY(-3px); border-color: #00bfff; }
+        .uc-box.selected { border-color: #00ff88; box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); transform: translateY(-5px) scale(1.05); background: rgba(0, 255, 136, 0.1); }
+
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Karta raqamini to'g'rilash */
+        .card-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; }
+        .card-text { font-family: monospace; font-size: 16px; letter-spacing: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; }
+        @media (min-width: 400px) { .card-text { font-size: 18px; letter-spacing: 3px; } }
     </style>
 </head>
-<body class="min-h-screen relative flex items-center justify-center py-10" onload="initPage()">
-<div class="radar-bg"><div class="radar-sweep"></div></div>
+<body class="px-4 w-full flex flex-col items-center">
 
-<!-- Admin tugmasi -->
-<div class="absolute top-6 right-6 z-40">
-    <button onclick="openAdminLogin()" class="text-yellow-600 hover:text-yellow-400 transition-all duration-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-        </svg>
-    </button>
-</div>
+    <audio id="clickSound" src="https://actions.google.com/sounds/v1/water/water_drop.ogg"></audio>
 
-<!-- ===== 1. E'LON FORMASI ===== -->
-<div id="adSection" class="w-full max-w-lg mx-auto p-8 bg-[#111]/90 backdrop-blur-md border border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.8)] relative z-10 hidden card">
-    <h2 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 pubg-font text-center mb-8">AKKAUNT SOTISH</h2>
-    <form id="adForm" class="space-y-4">
-        <div class="gaming-input-wrapper"><input type="text" id="username" placeholder="👤 Telegram Username (Masalan: Azizbek)" required class="gaming-input"></div>
-        <div class="file-upload-wrapper p-4 text-center" onclick="document.getElementById('videoFile').click()">
-            <p id="fileNameDisplay" class="text-sm font-bold text-gray-300">🎬 Obzor Videosini yuklang</p>
-            <input type="file" id="videoFile" accept="video/*" required class="hidden" onchange="updateName(this,'fileNameDisplay')">
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="gaming-input-wrapper"><input type="number" id="level"   placeholder="📊 Level"        required class="gaming-input"></div>
-            <div class="gaming-input-wrapper"><input type="number" id="guns"    placeholder="🔫 Qurollar"     required class="gaming-input"></div>
-            <div class="gaming-input-wrapper"><input type="number" id="xsuits"  placeholder="🥷 X-Suit"       required class="gaming-input"></div>
-            <div class="gaming-input-wrapper"><input type="number" id="rp"      placeholder="🎫 RP"           required class="gaming-input"></div>
-            <div class="gaming-input-wrapper"><input type="number" id="cars"    placeholder="🚗 Mashinalar"   required class="gaming-input"></div>
-            <div class="gaming-input-wrapper"><input type="number" id="adprice" placeholder="💵 Narxi (so'm)" required class="gaming-input"></div>
-        </div>
-        <div class="gaming-input-wrapper"><input type="text" id="phone" placeholder="📞 Telefon raqam (+998...)" required class="gaming-input"></div>
-        <button id="submitBtn" type="submit" class="btn-pubg w-full py-4 text-black text-2xl pubg-font mt-6">🚀 ADMINGA YUBORISH</button>
-    </form>
-</div>
-
-<!-- ===== 2. TO'LOV ===== -->
-<div id="paymentSection" class="w-full max-w-lg mx-auto p-8 bg-[#111]/90 backdrop-blur-md border border-yellow-700 shadow-[0_0_40px_rgba(234,179,8,.2)] relative z-10 hidden card">
-    <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-600 pubg-font text-center mb-2">💳 TO'LOV QILISH</h2>
-    <p class="text-center text-gray-300 text-sm mb-3">Siz bitta bepul e'lon joylab bo'ldingiz.<br>Keyingi e'lon narxi: <strong class="text-yellow-500 text-lg" id="displayPrice">50000</strong> so'm.</p>
-
-    <!-- Karta raqam + nusxalash tugmasi -->
-    <div class="bg-black border border-yellow-600 p-4 mb-5 rounded">
-        <span class="text-xs text-gray-500 block mb-2 text-center">KARTA RAQAM:</span>
-        <div class="flex items-center justify-between gap-3">
-            <strong class="text-yellow-400 tracking-widest text-xl flex-1" id="displayCard">8600 0000 0000 0000</strong>
-            <button onclick="copyCard()" id="copyBtn" class="copy-btn flex-shrink-0">
-                📋 NUSXA
-            </button>
-        </div>
-    </div>
-
-    <form id="paymentForm" class="space-y-4">
-        <!-- Telegram ID olish -->
-        <div class="bg-[#1a1a1a] border border-yellow-700/50 p-4 rounded space-y-3">
-            <p class="text-xs font-bold text-yellow-400 uppercase tracking-wider">📌 Telegram ID ni qanday olish?</p>
-            <p class="text-xs text-gray-400">
-                1️⃣ Quyidagi tugmani bosib botga o'ting<br>
-                2️⃣ Botga <code class="bg-black px-1 text-yellow-400">/start</code> yozing<br>
-                3️⃣ Bot sizga ID ni yuboradi — uni quyiga kiriting
-            </p>
-            <button type="button" onclick="openBot()" class="btn-pubg w-full py-3 text-black text-sm pubg-font">
-                🤖 BOTGA O'TIB ID OLISH
-            </button>
+    <div class="w-full max-w-md mx-auto relative z-10" id="app-container">
+        
+        <!-- PROFIL QISMI -->
+        <div class="profile-container" id="profile-header">
+            <img src="https://i.pinimg.com/736x/21/df/b5/21dfb552fae7ab3493821033b0067da2.jpg" alt="Profile" class="profile-img">
+            <h1 class="profile-name">PUBG MOBILE<br>UC SOTIB OLISH</h1>
         </div>
 
-        <div class="gaming-input-wrapper">
-            <input type="number" id="payTgId" placeholder="🔢 Telegram ID (masalan: 123456789)" required class="gaming-input">
-        </div>
+        <!-- ================= ASOSIY MENYU ================= -->
+        <div id="main-menu" class="fade-in-up">
+            <div class="custom-btn play-sound" onclick="startPurchase()">
+                <div class="btn-line line-top"></div>
+                UC SOTIB OLISH
+                <div class="btn-line line-bottom"></div>
+            </div>
 
-        <div class="file-upload-wrapper p-4 text-center" onclick="document.getElementById('receiptFile').click()">
-            <p id="receiptNameDisplay" class="text-sm font-bold text-gray-300">📸 To'lov chekini rasmga olib yuklang</p>
-            <input type="file" id="receiptFile" accept="image/*" required class="hidden" onchange="updateName(this,'receiptNameDisplay')">
-        </div>
-        <button id="payBtn" type="submit" class="btn-pubg w-full py-4 text-black text-2xl pubg-font">🚀 CHEKNI YUBORISH</button>
-    </form>
-</div>
-
-<!-- ===== 3. KOD KIRITISH ===== -->
-<div id="codeSection" class="w-full max-w-lg mx-auto p-8 bg-[#111]/90 backdrop-blur-md border border-yellow-600 shadow-[0_0_40px_rgba(234,179,8,.3)] relative z-10 hidden card">
-    <div class="text-center mb-8">
-        <div class="text-7xl mb-4">🔑</div>
-        <h2 class="text-4xl font-extrabold text-yellow-400 pubg-font mb-3">KOD KIRITING</h2>
-        <p class="text-gray-300 text-sm">
-            Admin to'lovni tasdiqladi.<br>
-            Botdan sizga <strong class="text-yellow-400">6 xonali kod</strong> keldi.<br>
-            O'sha kodni quyiga kiriting.
-        </p>
-    </div>
-
-    <div class="code-inputs mb-6">
-        <input class="code-input" maxlength="1" inputmode="numeric" oninput="moveNext(this,0)" onkeydown="movePrev(event,0)">
-        <input class="code-input" maxlength="1" inputmode="numeric" oninput="moveNext(this,1)" onkeydown="movePrev(event,1)">
-        <input class="code-input" maxlength="1" inputmode="numeric" oninput="moveNext(this,2)" onkeydown="movePrev(event,2)">
-        <input class="code-input" maxlength="1" inputmode="numeric" oninput="moveNext(this,3)" onkeydown="movePrev(event,3)">
-        <input class="code-input" maxlength="1" inputmode="numeric" oninput="moveNext(this,4)" onkeydown="movePrev(event,4)">
-        <input class="code-input" maxlength="1" inputmode="numeric" oninput="moveNext(this,5)" onkeydown="movePrev(event,5)">
-    </div>
-
-    <button onclick="submitCode()" id="codeBtn" class="btn-pubg w-full py-4 text-black text-2xl pubg-font mb-3">✅ TASDIQLASH</button>
-    <p id="codeError"    class="text-red-400    text-center text-sm font-bold hidden"></p>
-    <p id="codeChecking" class="text-yellow-400 text-center text-sm hidden">⏳ Tekshirilmoqda...</p>
-
-    <div class="mt-5 bg-[#1a1a1a] border border-gray-700 p-4 rounded text-xs text-gray-400 text-center">
-        💡 Kod botdan keladi. Telegram da botni oching — u yerda 6 xonali raqam yozilgan.
-    </div>
-</div>
-
-<!-- ADMIN LOGIN -->
-<div id="loginModal" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center z-50">
-    <div class="bg-[#111] p-8 max-w-sm w-full border border-yellow-600">
-        <h3 class="text-3xl mb-6 font-bold text-center text-yellow-500 pubg-font">🔒 ADMIN KIRISH</h3>
-        <input type="password" id="adminPassword" placeholder="Parol" class="w-full p-4 mb-6 bg-black border-b-2 border-gray-700 focus:border-yellow-500 outline-none text-white text-center text-xl font-bold tracking-[8px]" onkeydown="if(event.key==='Enter')verifyPassword()">
-        <div class="flex gap-4">
-            <button onclick="closeAdminLogin()" class="w-1/2 py-3 bg-gray-800 text-white font-bold">YOPISH</button>
-            <button onclick="verifyPassword()" class="w-1/2 py-3 bg-yellow-600 text-black font-bold">KIRISH</button>
-        </div>
-    </div>
-</div>
-
-<!-- ADMIN SOZLAMALAR -->
-<div id="settingsModal" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-y-auto py-10">
-    <div class="bg-[#111] p-8 max-w-md w-full border border-yellow-600 my-auto">
-        <h3 class="text-4xl mb-4 font-bold text-yellow-500 pubg-font border-b border-gray-800 pb-2">⚙️ SOZLAMALAR</h3>
-        <div class="space-y-4">
-            <div><label class="block text-xs font-bold mb-1 text-gray-400">BOT TOKEN:</label>
-                <input type="text" id="siteToken" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white text-xs font-mono"></div>
-            <div><label class="block text-xs font-bold mb-1 text-gray-400">ADMIN TELEGRAM ID:</label>
-                <input type="text" id="siteId" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-mono"></div>
-            <div><label class="block text-xs font-bold mb-1 text-blue-400">BOT USERNAME (@ siz, masalan: SEVARAAkkauntBot):</label>
-                <input type="text" id="siteBotUser" placeholder="SEVARAAkkauntBot" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-mono"></div>
-            <div><label class="block text-xs font-bold mb-1 text-yellow-400">E'LON NARXI (so'm):</label>
-                <input type="text" id="sitePrice" placeholder="50000" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-yellow-300"></div>
-            <div><label class="block text-xs font-bold mb-1 text-yellow-400">KARTA RAQAMI:</label>
-                <input type="text" id="siteCard" placeholder="8600 1234 5678 9012" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-yellow-300"></div>
-            <div><label class="block text-xs font-bold mb-1 text-red-400">ADMIN PAROLI (o'zgartirish):</label>
-                <input type="password" id="sitePassword" placeholder="Bo'sh qolsa o'zgarmaydi" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white"></div>
-            <div class="border-t border-gray-800 pt-4">
-                <button onclick="adminReset()" class="w-full py-3 bg-red-900 hover:bg-red-800 text-white font-bold text-sm transition-colors rounded">
-                    🔄 Foydalanuvchi limitini tiklash
-                </button>
+            <div class="social-container">
+                <a href="#" class="social-btn play-sound"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-btn play-sound"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" class="social-btn play-sound"><i class="fa-brands fa-telegram"></i></a>
             </div>
         </div>
-        <div class="flex justify-end gap-4 mt-6">
-            <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="px-6 py-3 bg-gray-800 font-bold text-white">YOPISH</button>
-            <button onclick="saveSettings()" class="px-6 py-3 bg-yellow-600 font-bold text-black">SAQLASH</button>
+
+        <!-- ================= XARID QILISH FORMASI ================= -->
+        <div id="purchase-form" class="hidden mt-2 w-full max-w-sm mx-auto fade-in-up">
+            
+            <div class="mb-5 glass-panel p-5">
+                <label class="block text-[#00bfff] text-sm font-bold mb-2 ml-1"><i class="fa-solid fa-id-card mr-1"></i> PUBG ID RAQAM</label>
+                <input type="number" placeholder="5123456789" class="w-full dark-input p-4 rounded-xl text-xl font-mono tracking-widest text-center" id="pubg-id">
+            </div>
+
+            <div class="mb-5 glass-panel p-5">
+                <label class="block text-[#00bfff] text-sm font-bold mb-3 ml-1"><i class="fa-solid fa-coins mr-1"></i> UC TANLANG</label>
+                <div class="grid grid-cols-2 gap-4" id="uc-grid">
+                    <!-- UC'lar Admin paneldan kelib chiqadi -->
+                </div>
+            </div>
+
+            <div id="payment-step" class="hidden mb-5 glass-panel p-6 shadow-2xl fade-in-up">
+                <p class="text-center text-gray-300 text-sm mb-1">To'lov summasi:</p>
+                <p class="text-center text-3xl font-black text-[#00ff88] mb-5 drop-shadow-lg"><span id="display-price">0</span> <span class="text-lg">UZS</span></p>
+                
+                <p class="text-[#00bfff] text-sm font-bold mb-2 ml-1"><i class="fa-regular fa-credit-card mr-1"></i> Shu kartaga to'lov qiling:</p>
+                <!-- Rasmda muammo bo'lgan Karta joyi to'g'rilandi -->
+                <div class="dark-input rounded-xl mb-2 card-container">
+                    <span id="card-number" class="card-text">8600 1234 5678 9012</span>
+                    <button type="button" onclick="copyCard()" class="text-white bg-gradient-to-r from-[#00bfff] to-[#007acc] px-3 py-2 rounded-lg font-bold text-sm active:scale-95 transition shadow-lg shrink-0 play-sound"><i class="fa-regular fa-copy"></i> NUSXA</button>
+                </div>
+                <p id="copy-msg" class="text-[#00ff88] text-sm text-center hidden mb-4 font-bold">✅ Karta nusxalandi!</p>
+
+                <label class="block text-[#00bfff] text-sm font-bold mb-2 ml-1 mt-4"><i class="fa-solid fa-file-invoice mr-1"></i> TO'LOV CHEKINI YUKLANG</label>
+                <input type="file" id="receipt-file" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#00bfff] file:text-white cursor-pointer dark-input rounded-xl p-1 play-sound">
+            </div>
+
+            <button type="button" id="submit-btn" onclick="submitOrder()" class="custom-btn mt-2 w-full max-w-full play-sound" style="margin-bottom: 0;">
+                <div class="btn-line line-top"></div>
+                YUBORISH
+                <div class="btn-line line-bottom"></div>
+            </button>
+            
+            <button type="button" onclick="goBack()" class="w-full text-center text-gray-400 mt-6 text-sm hover:text-white transition font-bold play-sound">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Orqaga qaytish
+            </button>
+        </div>
+
+        <!-- ================= ADMIN PANEL LOGIN ================= -->
+        <div id="admin-login" class="hidden w-full max-w-sm mx-auto mt-10 fade-in-up">
+            <div class="glass-panel p-8 text-center">
+                <i class="fa-solid fa-user-shield text-5xl text-[#ff007a] mb-4"></i>
+                <h2 class="text-2xl font-black text-white mb-6">ADMIN PANEL</h2>
+                <input type="text" id="admin-user" placeholder="Login" class="w-full dark-input p-3 rounded-xl mb-4 text-center font-bold">
+                <input type="password" id="admin-pass" placeholder="Parol (admin)" class="w-full dark-input p-3 rounded-xl mb-6 text-center font-bold">
+                <button onclick="loginAdmin()" class="w-full bg-gradient-to-r from-[#ff007a] to-[#8a2be2] text-white p-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition play-sound">KIRISH</button>
+                <button onclick="closeAdmin()" class="mt-4 text-gray-400 text-sm hover:text-white play-sound">Bekor qilish</button>
+            </div>
+        </div>
+
+        <!-- ================= ADMIN DASHBOARD ================= -->
+        <div id="admin-dashboard" class="hidden w-full max-w-md mx-auto mt-2 fade-in-up pb-10">
+            <div class="glass-panel p-4 mb-4 flex justify-between items-center">
+                <h2 class="text-lg font-black text-[#00ff88]"><i class="fa-solid fa-gear mr-1"></i> Sozlamalar</h2>
+                <button onclick="closeAdmin()" class="text-red-400 hover:text-red-500 font-bold text-sm play-sound"><i class="fa-solid fa-right-from-bracket"></i> Chiqish</button>
+            </div>
+
+            <!-- Bot Sozlamalari -->
+            <div class="glass-panel p-5 mb-4">
+                <h3 class="text-sm font-bold text-[#00bfff] mb-3"><i class="fa-brands fa-telegram mr-1"></i> Telegram Bot Sozlamalari</h3>
+                <input type="text" id="set-bot-token" placeholder="Bot Token (Masalan: 1234:AAH...)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
+                <input type="text" id="set-admin-id" placeholder="Sizning Chat ID (Masalan: 987654321)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
+                <button onclick="saveBotSettings()" class="w-full bg-[#00ff88] text-black p-2 rounded-xl font-bold play-sound">SAQLASH</button>
+            </div>
+
+            <!-- Karta Sozlamalari -->
+            <div class="glass-panel p-5 mb-4">
+                <h3 class="text-sm font-bold text-[#00bfff] mb-3"><i class="fa-regular fa-credit-card mr-1"></i> Karta Raqami</h3>
+                <input type="text" id="set-card" class="w-full dark-input p-3 rounded-xl mb-3 font-mono text-center tracking-widest text-lg">
+                <button onclick="saveCard()" class="w-full bg-[#00bfff] text-white p-2 rounded-xl font-bold play-sound">SAQLASH</button>
+            </div>
+
+            <!-- UC Qo'shish -->
+            <div class="glass-panel p-5">
+                <h3 class="text-sm font-bold text-[#ff007a] mb-3"><i class="fa-solid fa-plus mr-1"></i> Yangi UC Paket Qo'shish</h3>
+                <div class="flex gap-2 mb-3">
+                    <input type="number" id="new-uc-amount" placeholder="UC miqdori (Masalan: 60)" class="w-1/2 dark-input p-3 rounded-xl text-sm">
+                    <input type="text" id="new-uc-price" placeholder="Narxi (Masalan: 12 000)" class="w-1/2 dark-input p-3 rounded-xl text-sm">
+                </div>
+                <button onclick="addUCPackage()" class="w-full bg-[#ff007a] text-white p-2 rounded-xl font-bold mb-4 play-sound">QO'SHISH</button>
+                
+                <h3 class="text-xs text-gray-400 mb-2">Mavjud Paketlar:</h3>
+                <div id="admin-uc-list" class="flex flex-col gap-2">
+                    <!-- Paketlar ro'yxati -->
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Admin tugmasi -->
+    <button onclick="openAdmin()" class="fixed bottom-2 right-2 text-xs text-gray-600 hover:text-gray-300 transition play-sound"><i class="fa-solid fa-lock"></i> Admin</button>
 
 <script>
-    function updateName(input, id) {
-        if(input.files && input.files[0])
-            document.getElementById(id).innerHTML = `<span class="text-yellow-500">✅ Tanlandi:</span> ${input.files[0].name}`;
+    // --- BAZA (LocalStorage) ---
+    // Sayt yangilanganda o'chib ketmasligi uchun barcha ma'lumotlar LocalStorage'da saqlanadi
+    let db = JSON.parse(localStorage.getItem('uc_db')) || {
+        botToken: '',
+        adminId: '',
+        cardNumber: '8600 1234 5678 9012',
+        ucPackages:[
+            { id: 1, amount: '60', price: '12 000' },
+            { id: 2, amount: '325', price: '60 000' },
+            { id: 3, amount: '660', price: '115 000' },
+            { id: 4, amount: '1800', price: '320 000' }
+        ]
+    };
+
+    let selectedOrder = { uc: '', price: '' };
+
+    function saveData() {
+        localStorage.setItem('uc_db', JSON.stringify(db));
+        renderUCPackages();
+        document.getElementById('card-number').innerText = db.cardNumber;
     }
 
-    // Karta nusxalash
-    function copyCard() {
-        let card = localStorage.getItem('site_card') || document.getElementById('displayCard').innerText;
-        let clean = card.replace(/\s/g,'');
-        navigator.clipboard.writeText(clean).then(() => {
-            let btn = document.getElementById('copyBtn');
-            btn.textContent = '✅ NUSXALANDI!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = '📋 NUSXA'; btn.classList.remove('copied'); }, 2000);
-        }).catch(() => {
-            // Fallback
-            let ta = document.createElement('textarea');
-            ta.value = clean; document.body.appendChild(ta);
-            ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-            let btn = document.getElementById('copyBtn');
-            btn.textContent = '✅ NUSXALANDI!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = '📋 NUSXA'; btn.classList.remove('copied'); }, 2000);
+    // Ovoz
+    const dropSound = document.getElementById('clickSound');
+    document.addEventListener('click', (e) => {
+        if(e.target.closest('.play-sound')) {
+            dropSound.currentTime = 0; dropSound.play().catch(()=>{});
+        }
+    });
+
+    // --- MIJOZ UI FUNKSIYALAR ---
+    function initApp() {
+        renderUCPackages();
+        document.getElementById('card-number').innerText = db.cardNumber;
+    }
+
+    function renderUCPackages() {
+        const grid = document.getElementById('uc-grid');
+        const adminList = document.getElementById('admin-uc-list');
+        grid.innerHTML = ''; adminList.innerHTML = '';
+
+        db.ucPackages.forEach(pkg => {
+            // Mijoz qismi uchun
+            grid.innerHTML += `
+                <div class="uc-box p-4 rounded-xl text-center play-sound" onclick="selectUC(this, '${pkg.amount}', '${pkg.price}')">
+                    <div class="text-3xl font-black text-white">${pkg.amount} <span class="text-xs font-normal text-yellow-400">UC</span></div>
+                    <div class="text-sm text-gray-400 mt-1 font-bold">${pkg.price} so'm</div>
+                </div>
+            `;
+            // Admin qismi uchun
+            adminList.innerHTML += `
+                <div class="flex justify-between items-center bg-[#0b0c10] p-3 rounded-lg border border-[#1f222e]">
+                    <span class="text-white font-bold">${pkg.amount} UC - <span class="text-[#00ff88]">${pkg.price} UZS</span></span>
+                    <button onclick="removeUCPackage(${pkg.id})" class="text-red-500 hover:text-red-400 play-sound"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
         });
     }
 
-    // Botga o'tish
-    function openBot() {
-        let botUser = localStorage.getItem('site_bot_user') || '';
-        if(!botUser) return alert("❌ Sozlamalarda Bot Username kiritilmagan!\nAdmin panel → BOT USERNAME");
-        window.open(`https://t.me/${botUser.replace('@','')}`, '_blank');
+    function selectUC(element, amount, price) {
+        document.querySelectorAll('.uc-box').forEach(box => box.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedOrder.uc = amount;
+        selectedOrder.price = price;
+        
+        document.getElementById('display-price').innerText = price;
+        document.getElementById('payment-step').classList.remove('hidden');
+        setTimeout(() => document.getElementById('payment-step').scrollIntoView({ behavior: 'smooth' }), 100);
     }
 
-    // ===== KOD INPUTLARI =====
-    const codeInputs = () => document.querySelectorAll('.code-input');
-
-    function moveNext(el, idx) {
-        el.value = el.value.replace(/[^0-9]/g,'');
-        if(el.value) {
-            el.classList.add('filled');
-            let inputs = codeInputs();
-            if(idx < 5) inputs[idx+1].focus();
-            else submitCode();
-        } else { el.classList.remove('filled'); }
+    function copyCard() {
+        let cardText = document.getElementById('card-number').innerText.replace(/\s+/g, '');
+        navigator.clipboard.writeText(cardText).then(() => {
+            let msg = document.getElementById('copy-msg');
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 2000);
+        });
     }
 
-    function movePrev(e, idx) {
-        if(e.key==='Backspace') {
-            let inputs = codeInputs();
-            inputs[idx].value=''; inputs[idx].classList.remove('filled');
-            if(idx>0) inputs[idx-1].focus();
-        }
-    }
+    // --- TELEGRAM BOTGA YUBORISH ---
+    async function submitOrder() {
+        const idInput = document.getElementById('pubg-id').value;
+        const fileInput = document.getElementById('receipt-file').files[0];
+        const btn = document.getElementById('submit-btn');
 
-    document.addEventListener('paste', function(e) {
-        let text = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
-        if(text.length===6) {
-            let inputs = codeInputs();
-            text.split('').forEach((d,i)=>{ inputs[i].value=d; inputs[i].classList.add('filled'); });
-            setTimeout(submitCode, 200);
-        }
-    });
+        if(!idInput) return alert("Iltimos, PUBG ID raqamingizni kiriting!");
+        if(!selectedOrder.uc) return alert("Iltimos, UC paketini tanlang!");
+        if(!fileInput) return alert("Iltimos, to'lov chekini yuklang!");
 
-    function getCode() { return Array.from(codeInputs()).map(i=>i.value).join(''); }
-    function clearCode() {
-        codeInputs().forEach(i=>{ i.value=''; i.classList.remove('filled'); });
-        codeInputs()[0].focus();
-    }
-    function showError(msg) {
-        let el=document.getElementById('codeError');
-        el.innerText=msg; el.classList.remove('hidden');
-    }
-
-    // ===== KOD TEKSHIRISH =====
-    // Kod localStorage da saqlangan (bot URL orqali yuborganda yozilgan)
-    // Yoki foydalanuvchi qo'lda kiritadi — localStorage dagi kod bilan taqqoslanadi
-    async function submitCode() {
-        let code = getCode();
-        if(code.length < 6) return;
-
-        document.getElementById('codeError').classList.add('hidden');
-        document.getElementById('codeChecking').classList.remove('hidden');
-        document.getElementById('codeBtn').disabled = true;
-
-        await new Promise(r => setTimeout(r, 500));
-
-        document.getElementById('codeChecking').classList.add('hidden');
-        document.getElementById('codeBtn').disabled = false;
-
-        // localStorage dagi saqlangan kodni tekshirish
-        let savedCode = localStorage.getItem('site_unlock_code');
-        let usedCodes = JSON.parse(localStorage.getItem('site_used_codes') || '[]');
-
-        if(!savedCode) {
-            // Kod hali yuklanmagan — foydalanuvchi URL orqali kirmagan
-            showError("❌ Avval botdan kelgan havolani bosing, keyin kodni kiriting.");
-            clearCode();
-            return;
+        if(!db.botToken || !db.adminId) {
+            return alert("Admin panelda Bot Token yoki Chat ID kiritilmagan! Xaridni amalga oshirib bo'lmaydi.");
         }
 
-        if(usedCodes.includes(savedCode)) {
-            showError("❌ Bu kod allaqachon ishlatilgan!");
-            clearCode();
-            return;
-        }
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> YUBORILMOQDA...`;
+        btn.style.pointerEvents = 'none';
 
-        if(code === savedCode) {
-            // To'g'ri kod — ishlatilgan deb belgilash
-            usedCodes.push(savedCode);
-            localStorage.setItem('site_used_codes', JSON.stringify(usedCodes));
-            localStorage.removeItem('site_unlock_code');
-            localStorage.removeItem('site_pay_tg_id');
+        const caption = `🛒 <b>YANGI BUYURTMA!</b>\n\n🆔 <b>PUBG ID:</b> <code>${idInput}</code>\n💎 <b>UC Miqdori:</b> ${selectedOrder.uc} UC\n💰 <b>To'lanadigan summa:</b> ${selectedOrder.price} UZS`;
 
-            alert("✅ Kod tasdiqlandi! To'lovingiz qabul qilindi.\nEndi yangi e\'lon joylashingiz mumkin.");
-            localStorage.setItem('site_state', 'free');
-            showSection('free');
-            return;
-        }
-
-        showError("❌ Kod noto\'g\'ri! Botdan kelgan 6 raqamni kiriting.");
-        clearCode();
-
-    }
-
-    // ===== SAHIFA HOLATI =====
-    function initPage() {
-        document.getElementById('displayPrice').innerText = localStorage.getItem('site_price') || '50000';
-        document.getElementById('displayCard').innerText  = localStorage.getItem('site_card')  || '8600 0000 0000 0000';
-
-        // URL da ?code=XXXXXX bor — bot havolasidan keldi
-        let urlParams = new URLSearchParams(window.location.search);
-        let urlCode = urlParams.get('code');
-        if(urlCode && /^\d{6}$/.test(urlCode)) {
-            // URL dan kod keldi — kodni saqlash va kod kiritish sahifasini ko'rsatish
-            localStorage.setItem('site_unlock_code', urlCode);
-            localStorage.setItem('site_state', 'code_needed');
-            window.history.replaceState({}, '', window.location.pathname);
-            showSection('code_needed');
-            setTimeout(() => {
-                let inputs = codeInputs();
-                if(inputs.length) inputs[0].focus();
-            }, 300);
-            return;
-        }
-
-        showSection(localStorage.getItem('site_state') || 'free');
-    }
-
-    function showSection(state) {
-        ['adSection','paymentSection','codeSection'].forEach(id =>
-            document.getElementById(id).classList.add('hidden'));
-        if(state==='free')              document.getElementById('adSection').classList.remove('hidden');
-        else if(state==='payment_needed') document.getElementById('paymentSection').classList.remove('hidden');
-        else if(state==='code_needed')    document.getElementById('codeSection').classList.remove('hidden');
-    }
-
-    // ===== ADMIN =====
-    function openAdminLogin() { document.getElementById('loginModal').classList.remove('hidden'); document.getElementById('adminPassword').value=''; }
-    function closeAdminLogin(){ document.getElementById('loginModal').classList.add('hidden'); }
-
-    function verifyPassword() {
-        if(document.getElementById('adminPassword').value===(localStorage.getItem('site_admin_pass')||'4321')) {
-            document.getElementById('loginModal').classList.add('hidden');
-            document.getElementById('settingsModal').classList.remove('hidden');
-            document.getElementById('siteToken').value   = localStorage.getItem('site_bot_token')||'';
-            document.getElementById('siteId').value      = localStorage.getItem('site_admin_id') ||'';
-            document.getElementById('siteBotUser').value = localStorage.getItem('site_bot_user') ||'';
-            document.getElementById('sitePrice').value   = localStorage.getItem('site_price')    ||'50000';
-            document.getElementById('siteCard').value    = localStorage.getItem('site_card')     ||'8600 0000 0000 0000';
-            document.getElementById('sitePassword').value='';
-        } else { alert("❌ Parol noto'g'ri!"); }
-    }
-
-    function saveSettings() {
-        localStorage.setItem('site_bot_token', document.getElementById('siteToken').value.trim());
-        localStorage.setItem('site_admin_id',  document.getElementById('siteId').value.trim());
-        localStorage.setItem('site_bot_user',  document.getElementById('siteBotUser').value.trim().replace('@',''));
-        localStorage.setItem('site_price',     document.getElementById('sitePrice').value.trim());
-        localStorage.setItem('site_card',      document.getElementById('siteCard').value.trim());
-        let p = document.getElementById('sitePassword').value;
-        if(p) localStorage.setItem('site_admin_pass', p);
-        alert("✅ Saqlandi!");
-        document.getElementById('settingsModal').classList.add('hidden');
-        location.reload();
-    }
-
-    function adminReset() {
-        if(confirm("Foydalanuvchi limitini tiklamoqchimisiz?")) {
-            localStorage.setItem('site_state','free');
-            localStorage.removeItem('site_pay_tg_id');
-            document.getElementById('settingsModal').classList.add('hidden');
-            alert("✅ Tiklandi!"); location.reload();
-        }
-    }
-
-    // ===== E'LON YUBORISH =====
-    document.getElementById('adForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        let token   = localStorage.getItem('site_bot_token');
-        let adminId = localStorage.getItem('site_admin_id');
-        if(!token||!adminId) return alert("❌ Token va Admin ID kiritilmagan!\n(Sozlamalarga kiring)");
-        let file = document.getElementById('videoFile').files[0];
-        if(!file) return alert("❌ Video tanlanmagan!");
-        if(file.size > 50*1024*1024) return alert("❌ Video 50MB dan oshmasin!");
-
-        let btn=document.getElementById('submitBtn'), orig=btn.innerHTML;
-        btn.disabled=true; btn.innerHTML=`<div class="loader"></div><span>YUKLANMOQDA...</span>`;
-
-        let safeUser=document.getElementById('username').value.trim().replace('@','');
-        let caption=
-            `🌐 SAYTDAN YANGI E'LON!\n\n`+
-            `📊 Level: ${document.getElementById('level').value}\n`+
-            `🔫 Qurollar: ${document.getElementById('guns').value} ta\n`+
-            `🥷 X-Suit: ${document.getElementById('xsuits').value} ta\n`+
-            `🎫 RP: ${document.getElementById('rp').value} ta\n`+
-            `🚗 Mashinalar: ${document.getElementById('cars').value} ta\n`+
-            `💵 Narx: ${document.getElementById('adprice').value} so'm\n`+
-            `📞 Tel: ${document.getElementById('phone').value}\n`+
-            `👤 Sotuvchi: @${safeUser}`;
-
-        let fd=new FormData();
-        fd.append('chat_id',adminId); fd.append('video',file); fd.append('caption',caption);
-        fd.append('reply_markup',JSON.stringify({inline_keyboard:[
-            [{text:"✅ TASDIQLASH — Kanalga Jo'natish",callback_data:"webad_ok"}],
-            [{text:"❌ BEKOR QILISH",callback_data:"webad_no"}]
-        ]}));
+        const formData = new FormData();
+        formData.append("chat_id", db.adminId);
+        formData.append("photo", fileInput);
+        formData.append("caption", caption);
+        formData.append("parse_mode", "HTML");
 
         try {
-            let res=await fetch(`https://api.telegram.org/bot${token}/sendVideo`,{method:'POST',body:fd});
-            let data=await res.json();
-            btn.disabled=false; btn.innerHTML=orig;
-            if(data.ok) {
-                alert("✅ E'lon adminga yuborildi!\nAdmin tasdiqlagach kanalga joylanadi.");
-                localStorage.setItem('site_state','payment_needed');
-                showSection('payment_needed');
-            } else { alert("❌ Xatolik: "+data.description); }
-        } catch(err){ btn.disabled=false; btn.innerHTML=orig; alert("❌ Tarmoq xatosi!"); }
-    });
+            const response = await fetch(`https://api.telegram.org/bot${db.botToken}/sendPhoto`, {
+                method: "POST",
+                body: formData
+            });
 
-    // ===== TO'LOV YUBORISH =====
-    document.getElementById('paymentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        let token   = localStorage.getItem('site_bot_token');
-        let adminId = localStorage.getItem('site_admin_id');
-        if(!token||!adminId) return alert("❌ Token va Admin ID kiritilmagan!");
+            const result = await response.json();
+            if (result.ok) {
+                alert("✅ Buyurtmangiz muvaffaqiyatli yuborildi! Tez orada hisobingiz to'ldiriladi.");
+                goBack();
+                document.getElementById('pubg-id').value = '';
+                document.getElementById('receipt-file').value = '';
+                document.getElementById('payment-step').classList.add('hidden');
+                document.querySelectorAll('.uc-box').forEach(b => b.classList.remove('selected'));
+            } else {
+                alert("❌ Xatolik! Telegram bot token yoki ID noto'g'ri kiritilgan.");
+            }
+        } catch (error) {
+            alert("❌ Internetda xatolik yuz berdi!");
+        }
 
-        let tgId = document.getElementById('payTgId').value.trim();
-        if(!tgId||isNaN(tgId)) return alert("❌ To'g'ri Telegram ID kiriting!\n(Faqat raqamlar, masalan: 1234567890)");
-        let file = document.getElementById('receiptFile').files[0];
-        if(!file) return alert("❌ Rasm tanlanmagan!");
+        btn.innerHTML = `<div class="btn-line line-top"></div>YUBORISH<div class="btn-line line-bottom"></div>`;
+        btn.style.pointerEvents = 'auto';
+    }
 
-        let btn=document.getElementById('payBtn'), orig=btn.innerHTML;
-        btn.disabled=true; btn.innerHTML=`<div class="loader"></div><span>YUBORILMOQDA...</span>`;
+    function startPurchase() {
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('purchase-form').classList.remove('hidden');
+    }
 
-        let fd=new FormData();
-        fd.append('chat_id',adminId); fd.append('photo',file);
-        fd.append('caption',`💳 SAYTDAN TO'LOV CHEKI!\n\n🆔 TG ID: ${tgId}`);
-        fd.append('reply_markup',JSON.stringify({inline_keyboard:[
-            [{text:"✅ TO'LOV TASDIQLASH",callback_data:`webpay_ok_${tgId}`}],
-            [{text:"❌ BEKOR QILISH",callback_data:`webpay_no_${tgId}`}]
-        ]}));
+    function goBack() {
+        document.getElementById('purchase-form').classList.add('hidden');
+        document.getElementById('main-menu').style.display = 'block';
+    }
 
-        try {
-            let res=await fetch(`https://api.telegram.org/bot${token}/sendPhoto`,{method:'POST',body:fd});
-            let data=await res.json();
-            btn.disabled=false; btn.innerHTML=orig;
-            if(data.ok) {
-                localStorage.setItem('site_pay_tg_id', tgId);
-                localStorage.setItem('site_state','code_needed');
-                alert("✅ To'lov cheki yuborildi!\n\nAdmin tasdiqlagach botdan 6 xonali KOD keladi.\nTelegramni tekshirib turing.");
-                showSection('code_needed');
-            } else { alert("❌ Xatolik: "+data.description); }
-        } catch(err){ btn.disabled=false; btn.innerHTML=orig; alert("❌ Tarmoq xatosi!"); }
-    });
+    // --- ADMIN PANEL FUNKSIYALARI ---
+    function openAdmin() {
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('purchase-form').classList.add('hidden');
+        document.getElementById('profile-header').classList.add('hidden');
+        document.getElementById('admin-login').classList.remove('hidden');
+    }
+
+    function closeAdmin() {
+        document.getElementById('admin-login').classList.add('hidden');
+        document.getElementById('admin-dashboard').classList.add('hidden');
+        document.getElementById('profile-header').classList.remove('hidden');
+        document.getElementById('main-menu').style.display = 'block';
+    }
+
+    function loginAdmin() {
+        const user = document.getElementById('admin-user').value;
+        const pass = document.getElementById('admin-pass').value;
+        if(user === 'admin' && pass === 'admin') {
+            document.getElementById('admin-login').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            
+            // Sozlamalarni inputlarga qo'yish
+            document.getElementById('set-bot-token').value = db.botToken;
+            document.getElementById('set-admin-id').value = db.adminId;
+            document.getElementById('set-card').value = db.cardNumber;
+        } else {
+            alert("Login yoki parol xato!");
+        }
+    }
+
+    function saveBotSettings() {
+        db.botToken = document.getElementById('set-bot-token').value;
+        db.adminId = document.getElementById('set-admin-id').value;
+        saveData();
+        alert("Bot sozlamalari saqlandi!");
+    }
+
+    function saveCard() {
+        const newCard = document.getElementById('set-card').value;
+        if(newCard.length > 10) {
+            db.cardNumber = newCard;
+            saveData();
+            alert("Karta raqami saqlandi!");
+        }
+    }
+
+    function addUCPackage() {
+        const uc = document.getElementById('new-uc-amount').value;
+        const price = document.getElementById('new-uc-price').value;
+        if(!uc || !price) return alert("UC va Narxni kiriting!");
+        
+        db.ucPackages.push({ id: Date.now(), amount: uc, price: price });
+        saveData();
+        document.getElementById('new-uc-amount').value = '';
+        document.getElementById('new-uc-price').value = '';
+    }
+
+    function removeUCPackage(id) {
+        db.ucPackages = db.ucPackages.filter(pkg => pkg.id !== id);
+        saveData();
+    }
+
+    // Ishga tushirish
+    initApp();
 </script>
 </body>
 </html>
