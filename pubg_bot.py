@@ -15,7 +15,7 @@ from telegram.ext import (
 #  SOZLAMALAR — shu yerga o'z ma'lumotlaringizni kiriting
 # ══════════════════════════════════════════
 
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"   # ← BotFather tokenini kiriting
+BOT_TOKEN = "8617000246:AAET0IopJjLXBigJcvbNXjGIXm_8QEX2NR4"   # ← BotFather tokenini kiriting
 
 ADMIN_IDS = [
     123456789,   # ← o'z Telegram ID raqamingizni kiriting
