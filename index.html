@@ -181,13 +181,11 @@
             let fd = new FormData(); fd.append('chat_id', id); fd.append('video', file);
             fd.append('caption', `🌐 SAYTDAN YANGI E'LON!\n\n📊 Level: ${document.getElementById('level').value}\n🔫 Qurollar: ${document.getElementById('guns').value}\n🥷 X-Suit: ${document.getElementById('xsuits').value}\n🎫 RP: ${document.getElementById('rp').value}\n🚗 Mashinalar: ${document.getElementById('cars').value}\n💵 Narx: ${document.getElementById('price').value} so'm\n📞 Tel: ${document.getElementById('phone').value}\n\n👤 Sotuvchi: @${safeUser}`);
             
-            // Xatolik bermasligi uchun JSON datadan rang beruvchi kodlar tozalandi
+            // Alohida qatorlar qilib chiqarildi
             fd.append('reply_markup', JSON.stringify({ 
-                inline_keyboard: [[
-                    { text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "webad_ok" }
-                ],[
-                    { text: "❌ BEKOR QILISH", callback_data: "webad_no" }
-                ]] 
+                inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "webad_ok" }],
+                    [{ text: "❌ BEKOR QILISH", callback_data: "webad_no" }]
+                ] 
             }));
 
             fetch(`https://api.telegram.org/bot${token}/sendVideo`, { method: 'POST', body: fd })
@@ -212,19 +210,18 @@
             let fd = new FormData(); fd.append('chat_id', id); fd.append('photo', file);
             fd.append('caption', `💳 SAYTDAN TO'LOV CHEKI!\n\n👤 Kimdan: ${user}`);
             
+            // Alohida qatorlar
             fd.append('reply_markup', JSON.stringify({ 
-                inline_keyboard: [[
-                    { text: "✅ Tasdiqlash", callback_data: "webpay_ok" }, 
-                    { text: "❌ Bekor qilish", callback_data: "webpay_no" }
-                ]] 
+                inline_keyboard: [[{ text: "✅ TASDIQLASH", callback_data: "webpay_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "webpay_no" }]
+                ] 
             }));
 
             fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd })
             .then(res => res.json()).then(data => {
                 btn.disabled = false; btn.innerHTML = orig;
                 if(data.ok) {
-                    // Sayt qulfdan avtomat ochiladi, hech qanaqa promo kod kerak emas
-                    alert("✅ To'lov cheki yuborildi! Endi e'loningizni joylashingiz mumkin.");
+                    // Sayt qulfdan darhol avtomat ochiladi
+                    alert("✅ To'lov cheki yuborildi! Endi keyingi e'loningizni joylashingiz mumkin.");
                     localStorage.setItem('site_ads_posted', '0');
                     location.reload(); 
                 } else alert("❌ Xatolik yuz berdi.");
