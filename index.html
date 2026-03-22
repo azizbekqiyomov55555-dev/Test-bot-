@@ -88,9 +88,9 @@
             </div>
 
             <div class="social-container">
-                <a href="#" class="social-btn play-sound"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="social-btn play-sound"><i class="fa-brands fa-youtube"></i></a>
-                <a href="#" class="social-btn play-sound"><i class="fa-brands fa-telegram"></i></a>
+                <a href="#" target="_blank" id="link-instagram" class="social-btn play-sound"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" target="_blank" id="link-youtube" class="social-btn play-sound"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" target="_blank" id="link-telegram" class="social-btn play-sound"><i class="fa-brands fa-telegram"></i></a>
             </div>
         </div>
 
@@ -137,8 +137,8 @@
             <div class="glass-panel p-8 text-center">
                 <i class="fa-solid fa-user-shield text-5xl text-[#ff007a] mb-4"></i>
                 <h2 class="text-2xl font-black text-white mb-6">ADMIN PANEL</h2>
-                <input type="text" id="admin-user" placeholder="Login (admin)" class="w-full dark-input p-3 rounded-xl mb-4 text-center font-bold">
-                <input type="password" id="admin-pass" placeholder="Parol (admin)" class="w-full dark-input p-3 rounded-xl mb-6 text-center font-bold">
+                <input type="text" id="admin-user" placeholder="Login" class="w-full dark-input p-3 rounded-xl mb-4 text-center font-bold">
+                <input type="password" id="admin-pass" placeholder="Parol" class="w-full dark-input p-3 rounded-xl mb-6 text-center font-bold">
                 <button onclick="loginAdmin()" class="w-full bg-gradient-to-r from-[#ff007a] to-[#8a2be2] text-white p-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition play-sound">KIRISH</button>
                 <button onclick="closeAdmin()" class="mt-4 text-gray-400 text-sm hover:text-white play-sound">Bekor qilish</button>
             </div>
@@ -159,6 +159,14 @@
                     <button onclick="saveBotSettings()" class="w-1/2 bg-[#00ff88] text-black p-2 rounded-xl font-bold play-sound">SAQLASH</button>
                     <button onclick="testBotConnection()" id="test-bot-btn" class="w-1/2 bg-[#00bfff] text-white p-2 rounded-xl font-bold play-sound">TEKSHIRISH</button>
                 </div>
+            </div>
+
+            <div class="glass-panel p-5 mb-4">
+                <h3 class="text-sm font-bold text-[#ff007a] mb-3"><i class="fa-solid fa-link mr-1"></i> Ijtimoiy Tarmoqlar</h3>
+                <input type="text" id="set-instagram" placeholder="Instagram URL (https://...)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
+                <input type="text" id="set-youtube" placeholder="YouTube URL (https://...)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
+                <input type="text" id="set-telegram" placeholder="Telegram URL (https://...)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
+                <button onclick="saveSocialLinks()" class="w-full bg-gradient-to-r from-[#ff007a] to-[#8a2be2] text-white p-2 rounded-xl font-bold play-sound">LINKLARNI SAQLASH</button>
             </div>
 
             <div class="glass-panel p-5 mb-4">
@@ -184,16 +192,27 @@
     <button onclick="openAdmin()" class="fixed bottom-2 right-2 text-xs text-gray-600 hover:text-gray-300 transition play-sound"><i class="fa-solid fa-lock"></i> Admin</button>
 
 <script>
-    // BAZA
-    let db = JSON.parse(localStorage.getItem('uc_db')) || {
-        botToken: '', adminId: '', cardNumber: '8600 1234 5678 9012',
-        ucPackages:[
-            { id: 1, amount: '60', price: '12 000' },
-            { id: 2, amount: '325', price: '60 000' },
-            { id: 3, amount: '660', price: '115 000' },
-            { id: 4, amount: '1800', price: '320 000' }
-        ]
-    };
+    // BAZANI YUKLASH
+    let db = JSON.parse(localStorage.getItem('uc_db'));
+    
+    // Agar baza bo'lmasa yaratamiz
+    if (!db) {
+        db = {
+            botToken: '', adminId: '', cardNumber: '8600 1234 5678 9012',
+            social: { instagram: '', youtube: '', telegram: '' },
+            ucPackages:[
+                { id: 1, amount: '60', price: '12 000' },
+                { id: 2, amount: '325', price: '60 000' },
+                { id: 3, amount: '660', price: '115 000' },
+                { id: 4, amount: '1800', price: '320 000' }
+            ]
+        };
+    }
+    // Agar eski versiyadan kirsa va social yo'q bo'lsa
+    if (!db.social) {
+        db.social = { instagram: '', youtube: '', telegram: '' };
+    }
+
     let selectedOrder = { uc: '', price: '' };
 
     function formatCardNumber(value) {
@@ -207,10 +226,17 @@
 
     function formatInputCard(element) { element.value = formatCardNumber(element.value); }
 
+    function updateSocialLinks() {
+        document.getElementById('link-instagram').href = db.social.instagram || '#';
+        document.getElementById('link-youtube').href = db.social.youtube || '#';
+        document.getElementById('link-telegram').href = db.social.telegram || '#';
+    }
+
     function saveData() {
         localStorage.setItem('uc_db', JSON.stringify(db));
         renderUCPackages();
         document.getElementById('card-number').innerText = formatCardNumber(db.cardNumber);
+        updateSocialLinks();
     }
 
     const dropSound = document.getElementById('clickSound');
@@ -219,6 +245,7 @@
     function initApp() {
         renderUCPackages();
         document.getElementById('card-number').innerText = formatCardNumber(db.cardNumber);
+        updateSocialLinks();
         try {
             const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
             const user = tg.initDataUnsafe?.user;
@@ -384,17 +411,35 @@
     function openAdmin() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('purchase-form').classList.add('hidden'); document.getElementById('profile-header').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
     function closeAdmin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.add('hidden'); document.getElementById('profile-header').classList.remove('hidden'); document.getElementById('main-menu').style.display = 'block'; }
 
+    // LOGIN VA PAROL O'ZGARTIRILDI
     function loginAdmin() {
         const user = document.getElementById('admin-user').value; const pass = document.getElementById('admin-pass').value;
-        if(user === 'admin' && pass === 'admin') {
+        if(user === 'Aziz' && pass === '2008') {
             document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.remove('hidden');
+            
             document.getElementById('set-bot-token').value = db.botToken; 
             document.getElementById('set-admin-id').value = db.adminId; 
+            
+            document.getElementById('set-instagram').value = db.social.instagram; 
+            document.getElementById('set-youtube').value = db.social.youtube; 
+            document.getElementById('set-telegram').value = db.social.telegram; 
+            
             document.getElementById('set-card').value = formatCardNumber(db.cardNumber);
+            document.getElementById('admin-user').value = '';
+            document.getElementById('admin-pass').value = '';
         } else { alert("Login yoki parol xato!"); }
     }
 
     function saveBotSettings() { db.botToken = document.getElementById('set-bot-token').value.trim(); db.adminId = document.getElementById('set-admin-id').value.trim(); saveData(); alert("Bot sozlamalari saqlandi!"); }
+    
+    function saveSocialLinks() {
+        db.social.instagram = document.getElementById('set-instagram').value.trim();
+        db.social.youtube = document.getElementById('set-youtube').value.trim();
+        db.social.telegram = document.getElementById('set-telegram').value.trim();
+        saveData();
+        alert("Ijtimoiy tarmoq silsilkalari saqlandi!");
+    }
+
     function saveCard() { const newCard = document.getElementById('set-card').value; if(newCard.length > 5) { db.cardNumber = newCard; saveData(); alert("Karta raqami saqlandi!"); } }
     
     function addUCPackage() {
