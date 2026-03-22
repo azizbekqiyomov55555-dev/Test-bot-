@@ -154,7 +154,11 @@
                 <h3 class="text-sm font-bold text-[#00bfff] mb-3"><i class="fa-brands fa-telegram mr-1"></i> Telegram Bot Sozlamalari</h3>
                 <input type="text" id="set-bot-token" placeholder="Bot Token (Misol: 1234:AAH...)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
                 <input type="text" id="set-admin-id" placeholder="Chat ID (Misol: 987654321)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
-                <button onclick="saveBotSettings()" class="w-full bg-[#00ff88] text-black p-2 rounded-xl font-bold play-sound">SAQLASH</button>
+                
+                <div class="flex gap-2">
+                    <button onclick="saveBotSettings()" class="w-1/2 bg-[#00ff88] text-black p-2 rounded-xl font-bold play-sound">SAQLASH</button>
+                    <button onclick="testBotConnection()" id="test-bot-btn" class="w-1/2 bg-[#00bfff] text-white p-2 rounded-xl font-bold play-sound">TEKSHIRISH</button>
+                </div>
             </div>
 
             <div class="glass-panel p-5 mb-4">
@@ -248,7 +252,7 @@
         });
     }
 
-    // TELEGRAM BOTGA YUBORISH
+    // TELEGRAM BOTGA YUBORISH (XARID)
     async function submitOrder() {
         const idInput = document.getElementById('pubg-id').value;
         const fileInput = document.getElementById('receipt-file').files[0];
@@ -305,7 +309,6 @@
                 document.querySelectorAll('.uc-box').forEach(b => b.classList.remove('selected'));
                 selectedOrder = { uc: '', price: '' }; 
             } else {
-                // XATOLARNI ANIQLAB BERUVCHI AQLI QISM
                 if (result.error_code === 401) {
                     alert("❌ XATOLIK: Siz kiritgan Bot Token Noto'g'ri!");
                 } else if (result.error_code === 400) {
@@ -321,6 +324,58 @@
         } finally {
             btn.innerHTML = `<div class="btn-line line-top"></div>YUBORISH<div class="btn-line line-bottom"></div>`;
             btn.style.pointerEvents = 'auto';
+        }
+    }
+
+    // BOTNI TEKSHIRISH FUNKSIYASI
+    async function testBotConnection() {
+        const token = document.getElementById('set-bot-token').value.trim();
+        const chatId = document.getElementById('set-admin-id').value.trim();
+        const testBtn = document.getElementById('test-bot-btn');
+
+        if (!token || !chatId) {
+            return alert("Iltimos, avval Bot Token va Chat ID ni kiriting!");
+        }
+
+        testBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> KUTING...`;
+        testBtn.style.pointerEvents = 'none';
+
+        const text = "✅ <b>Tabriklaymiz!</b> Saytingiz botga muvaffaqiyatli ulandi!\n\n<i>Endi xaridlar haqidagi barcha ma'lumotlar shu yerga keladi.</i>";
+
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: text,
+                    parse_mode: "HTML"
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.ok) {
+                alert("✅ Bot muvaffaqiyatli ulandi! Telegramingizga xabar yuborildi.");
+                db.botToken = token; 
+                db.adminId = chatId; 
+                saveData();
+            } else {
+                if (result.error_code === 401) {
+                    alert("❌ XATOLIK: Noto'g'ri Bot Token kiritildi!");
+                } else if (result.error_code === 400) {
+                    alert("❌ XATOLIK: Chat ID noto'g'ri kiritilgan!");
+                } else if (result.error_code === 403) {
+                    alert("❌ DIQQAT! Bot sizga yoza olmaydi.\nTelegramga kirib o'z botingizga /start tugmasini bosing!");
+                } else {
+                    alert("❌ XATOLIK: " + result.description);
+                }
+            }
+        } catch (error) {
+            alert("❌ INTERNETDA MUAMMO: Serverga ulanib bo'lmadi!");
+        } finally {
+            testBtn.innerHTML = `TEKSHIRISH`;
+            testBtn.style.pointerEvents = 'auto';
         }
     }
 
