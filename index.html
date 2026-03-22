@@ -181,9 +181,9 @@
             let fd = new FormData(); fd.append('chat_id', id); fd.append('video', file);
             fd.append('caption', `🌐 SAYTDAN YANGI E'LON!\n\n📊 Level: ${document.getElementById('level').value}\n🔫 Qurollar: ${document.getElementById('guns').value}\n🥷 X-Suit: ${document.getElementById('xsuits').value}\n🎫 RP: ${document.getElementById('rp').value}\n🚗 Mashinalar: ${document.getElementById('cars').value}\n💵 Narx: ${document.getElementById('price').value} so'm\n📞 Tel: ${document.getElementById('phone').value}\n\n👤 Sotuvchi: @${safeUser}`);
             
-            // Alohida qatorlar va ranglar qo'shildi
+            // Xato bermasligi uchun style olib tashlandi, lekin emojilar joyida!
             fd.append('reply_markup', JSON.stringify({ 
-                inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "webad_ok", style: "success" }],[{ text: "❌ BEKOR QILISH", callback_data: "webad_no", style: "danger" }]
+                inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "webad_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "webad_no" }]
                 ] 
             }));
 
@@ -209,9 +209,8 @@
             let fd = new FormData(); fd.append('chat_id', id); fd.append('photo', file);
             fd.append('caption', `💳 SAYTDAN TO'LOV CHEKI!\n\n👤 Kimdan: ${user}`);
             
-            // Alohida qatorlar va ranglar qo'shildi
             fd.append('reply_markup', JSON.stringify({ 
-                inline_keyboard: [[{ text: "✅ TASDIQLASH", callback_data: "webpay_ok", style: "success" }],[{ text: "❌ BEKOR QILISH", callback_data: "webpay_no", style: "danger" }]
+                inline_keyboard: [[{ text: "✅ TASDIQLASH", callback_data: "webpay_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "webpay_no" }]
                 ] 
             }));
 
@@ -219,8 +218,7 @@
             .then(res => res.json()).then(data => {
                 btn.disabled = false; btn.innerHTML = orig;
                 if(data.ok) {
-                    // Sayt qulfdan darhol avtomat ochiladi
-                    alert("✅ To'lov cheki yuborildi! Endi keyingi e'loningizni joylashingiz mumkin.");
+                    alert("✅ To'lov cheki yuborildi! Endi navbatdagi e'loningizni joylashingiz mumkin.");
                     localStorage.setItem('site_ads_posted', '0');
                     location.reload(); 
                 } else alert("❌ Xatolik yuz berdi.");
