@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- TELEGRAM WEB APP KUTUBXONASI -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
@@ -64,11 +63,11 @@
 
         .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .card-container { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; }
-        .card-text { font-family: monospace; font-size: 14px; letter-spacing: 1px; color: white; word-break: break-all; }
-        @media (min-width: 400px) { .card-text { font-size: 16px; letter-spacing: 2px; } }
+        /* Karta raqamini tuzatish: scrollable qilingan, sig'may qolmaydi */
+        .card-container { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; overflow: hidden; }
+        .card-text { font-family: monospace; font-size: 16px; letter-spacing: 1.5px; color: white; white-space: nowrap; overflow-x: auto; flex-grow: 1; }
+        .card-text::-webkit-scrollbar { display: none; } /* Scroll chizig'ini yashirish */
     </style>
 </head>
 <body class="px-4 w-full flex flex-col items-center">
@@ -77,14 +76,13 @@
 
     <div class="w-full max-w-md mx-auto relative z-10" id="app-container">
         
-        <!-- PROFIL QISMI -->
+        <!-- PROFIL -->
         <div class="profile-container" id="profile-header">
-            <!-- Standart rasm, Telegram Web App ishga tushsa o'zi avtomat o'zgaradi -->
             <img src="https://i.pinimg.com/736x/21/df/b5/21dfb552fae7ab3493821033b0067da2.jpg" alt="Profile" class="profile-img" id="user-profile-img">
             <h1 class="profile-name">PUBG MOBILE<br>UC SOTIB OLISH</h1>
         </div>
 
-        <!-- ================= ASOSIY MENYU ================= -->
+        <!-- ASOSIY MENYU -->
         <div id="main-menu" class="fade-in-up">
             <div class="custom-btn play-sound" onclick="startPurchase()">
                 <div class="btn-line line-top"></div>
@@ -99,7 +97,7 @@
             </div>
         </div>
 
-        <!-- ================= XARID QILISH FORMASI ================= -->
+        <!-- XARID FORMASI -->
         <div id="purchase-form" class="hidden mt-2 w-full max-w-sm mx-auto fade-in-up">
             
             <div class="mb-5 glass-panel p-5">
@@ -109,9 +107,7 @@
 
             <div class="mb-5 glass-panel p-5">
                 <label class="block text-[#00bfff] text-sm font-bold mb-3 ml-1"><i class="fa-solid fa-coins mr-1"></i> UC TANLANG</label>
-                <div class="grid grid-cols-2 gap-4" id="uc-grid">
-                    <!-- UC'lar Admin paneldan keladi -->
-                </div>
+                <div class="grid grid-cols-2 gap-4" id="uc-grid"></div>
             </div>
 
             <div id="payment-step" class="hidden mb-5 glass-panel p-6 shadow-2xl fade-in-up">
@@ -141,7 +137,7 @@
             </button>
         </div>
 
-        <!-- ================= ADMIN PANEL LOGIN ================= -->
+        <!-- ADMIN LOGIN -->
         <div id="admin-login" class="hidden w-full max-w-sm mx-auto mt-10 fade-in-up">
             <div class="glass-panel p-8 text-center">
                 <i class="fa-solid fa-user-shield text-5xl text-[#ff007a] mb-4"></i>
@@ -153,7 +149,7 @@
             </div>
         </div>
 
-        <!-- ================= ADMIN DASHBOARD ================= -->
+        <!-- ADMIN DASHBOARD -->
         <div id="admin-dashboard" class="hidden w-full max-w-md mx-auto mt-2 fade-in-up pb-10">
             <div class="glass-panel p-4 mb-4 flex justify-between items-center">
                 <h2 class="text-lg font-black text-[#00ff88]"><i class="fa-solid fa-gear mr-1"></i> Sozlamalar</h2>
@@ -163,18 +159,18 @@
             <div class="glass-panel p-5 mb-4">
                 <h3 class="text-sm font-bold text-[#00bfff] mb-3"><i class="fa-brands fa-telegram mr-1"></i> Telegram Bot Sozlamalari</h3>
                 <input type="text" id="set-bot-token" placeholder="Bot Token (1234:AAH...)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
-                <input type="text" id="set-admin-id" placeholder="Chat ID (Masalan: 987654321)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
+                <input type="text" id="set-admin-id" placeholder="Chat ID (Sizning ID: 987654321)" class="w-full dark-input p-3 rounded-xl mb-3 text-sm">
                 <button onclick="saveBotSettings()" class="w-full bg-[#00ff88] text-black p-2 rounded-xl font-bold play-sound">SAQLASH</button>
             </div>
 
             <div class="glass-panel p-5 mb-4">
                 <h3 class="text-sm font-bold text-[#00bfff] mb-3"><i class="fa-regular fa-credit-card mr-1"></i> Karta Raqami</h3>
-                <input type="text" id="set-card" class="w-full dark-input p-3 rounded-xl mb-3 font-mono text-center tracking-widest text-lg">
+                <input type="text" id="set-card" oninput="formatInputCard(this)" placeholder="8600 1234 5678 9012" class="w-full dark-input p-3 rounded-xl mb-3 font-mono text-center tracking-widest text-lg">
                 <button onclick="saveCard()" class="w-full bg-[#00bfff] text-white p-2 rounded-xl font-bold play-sound">SAQLASH</button>
             </div>
 
             <div class="glass-panel p-5">
-                <h3 class="text-sm font-bold text-[#ff007a] mb-3"><i class="fa-solid fa-plus mr-1"></i> Yangi UC Paket Qo'shish</h3>
+                <h3 class="text-sm font-bold text-[#ff007a] mb-3"><i class="fa-solid fa-plus mr-1"></i> Yangi UC Paket</h3>
                 <div class="flex gap-2 mb-3">
                     <input type="number" id="new-uc-amount" placeholder="UC miqdori" class="w-1/2 dark-input p-3 rounded-xl text-sm">
                     <input type="text" id="new-uc-price" placeholder="Narxi" class="w-1/2 dark-input p-3 rounded-xl text-sm">
@@ -187,10 +183,11 @@
         </div>
     </div>
 
+    <!-- ADMIN KIRISH TUGMASI (Yashirincha) -->
     <button onclick="openAdmin()" class="fixed bottom-2 right-2 text-xs text-gray-600 hover:text-gray-300 transition play-sound"><i class="fa-solid fa-lock"></i> Admin</button>
 
 <script>
-    // --- BAZA ---
+    // --- BAZA (LocalStorage) ---
     let db = JSON.parse(localStorage.getItem('uc_db')) || {
         botToken: '', adminId: '', cardNumber: '8600 1234 5678 9012',
         ucPackages:[
@@ -202,13 +199,34 @@
     };
     let selectedOrder = { uc: '', price: '' };
 
+    // KARTA RAQAMINI 4 TA RAQAMDAN KЕYIN PROBЕL QILUVCHI FUNKSIYA
+    function formatCardNumber(value) {
+        let v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let matches = v.match(/\d{4,16}/g);
+        let match = matches && matches[0] || '';
+        let parts =[];
+        for (let i = 0, len = match.length; i < len; i += 4) {
+            parts.push(match.substring(i, i + 4));
+        }
+        if (parts.length) {
+            return parts.join(' ');
+        } else {
+            return value;
+        }
+    }
+
+    // Input yozilayotganda formatlash
+    function formatInputCard(element) {
+        element.value = formatCardNumber(element.value);
+    }
+
     function saveData() {
         localStorage.setItem('uc_db', JSON.stringify(db));
         renderUCPackages();
-        document.getElementById('card-number').innerText = db.cardNumber;
+        document.getElementById('card-number').innerText = formatCardNumber(db.cardNumber);
     }
 
-    // --- OVOZ ---
+    // --- OVOZ FUNKSIYASI ---
     const dropSound = document.getElementById('clickSound');
     document.addEventListener('click', (e) => {
         if(e.target.closest('.play-sound')) {
@@ -216,27 +234,24 @@
         }
     });
 
+    // ILova yuklanganda ishlashi
     function initApp() {
         renderUCPackages();
-        document.getElementById('card-number').innerText = db.cardNumber;
+        document.getElementById('card-number').innerText = formatCardNumber(db.cardNumber);
         
-        // ================= TELEGRAM PROFIL RASMINI OLISH =================
+        // TELEGRAM PROFIL RASMI (Agar Web App ichida bo'lsa)
         try {
             const tg = window.Telegram.WebApp;
-            tg.ready(); // Web App ni tayyorlash
-            tg.expand(); // Ekranni to'liq ochish
-
+            tg.ready();
+            tg.expand();
             const user = tg.initDataUnsafe?.user;
-            
-            // Agar bot ichida ochilgan bo'lsa va foydalanuvchining rasmi bo'lsa
             if (user && user.photo_url) {
                 document.getElementById('user-profile-img').src = user.photo_url;
             }
-        } catch (e) {
-            console.log("Telegram ilovasidan tashqarida ochildi, standart rasm qoladi.");
-        }
+        } catch (e) { console.log("Telegramdan tashqari"); }
     }
 
+    // UC larni chizish
     function renderUCPackages() {
         const grid = document.getElementById('uc-grid');
         const adminList = document.getElementById('admin-uc-list');
@@ -258,6 +273,7 @@
         });
     }
 
+    // UC ni tanlash
     function selectUC(element, amount, price) {
         document.querySelectorAll('.uc-box').forEach(box => box.classList.remove('selected'));
         element.classList.add('selected');
@@ -267,6 +283,7 @@
         setTimeout(() => document.getElementById('payment-step').scrollIntoView({ behavior: 'smooth' }), 100);
     }
 
+    // Karta raqamini nusxalash
     function copyCard() {
         let cardText = document.getElementById('card-number').innerText.replace(/\s+/g, '');
         navigator.clipboard.writeText(cardText).then(() => {
@@ -276,6 +293,7 @@
         });
     }
 
+    // ================= TELEGRAM BOTGA YUBORISH =================
     async function submitOrder() {
         const idInput = document.getElementById('pubg-id').value;
         const fileInput = document.getElementById('receipt-file').files[0];
@@ -287,8 +305,9 @@
 
         let currentDB = JSON.parse(localStorage.getItem('uc_db')) || db;
 
+        // Tizimda admin ID kiritilmagan bo'lsa ogohlantirish
         if(!currentDB.botToken || !currentDB.adminId) {
-            alert("⚠️ DIQQAT! Tizimga Bot Token yoki Admin ID ulanmagan.\nIltimos pastdan Admin Panelga kirib sozlamalarni to'ldiring!");
+            alert("⚠️ XATOLIK! Tizimga Bot Token yoki Chat ID (Admin ID) ulanmagan.\n\nIltimos pastdan 'Admin Panel'ga kiring va sozlamalarni to'ldiring!");
             return;
         }
 
@@ -299,23 +318,22 @@
         const timeString = now.toLocaleDateString('uz-UZ') + " " + now.toLocaleTimeString('uz-UZ');
         const orderId = Math.floor(100000 + Math.random() * 900000); 
         
-        // Kim tomondan xarid qilinganini qo'shish (agar botda ochilgan bo'lsa)
         let telegramUser = "";
         try {
             const user = window.Telegram.WebApp.initDataUnsafe?.user;
             if (user) {
-                telegramUser = `\n👤 <b>Foydalanuvchi:</b> <a href="tg://user?id=${user.id}">${user.first_name}</a>`;
+                telegramUser = `\n👤 <b>Mijoz Profili:</b> <a href="tg://user?id=${user.id}">${user.first_name}</a>`;
             }
         } catch(e) {}
 
         const caption = `🛒 <b>YANGI BUYURTMA! (#${orderId})</b>\n\n` +
                         `🆔 <b>PUBG ID:</b> <code>${idInput}</code>\n` +
                         `💎 <b>UC Miqdori:</b> ${selectedOrder.uc} UC\n` +
-                        `💰 <b>To'lanadigan summa:</b> ${selectedOrder.price} UZS\n` +
+                        `💰 <b>Summa:</b> ${selectedOrder.price} UZS\n` +
                         `⏰ <b>Vaqti:</b> ${timeString}` + telegramUser;
 
         const formData = new FormData();
-        formData.append("chat_id", currentDB.adminId.trim());
+        formData.append("chat_id", currentDB.adminId.trim()); // Admining Chat ID si kerak bu yerga
         formData.append("photo", fileInput);
         formData.append("caption", caption);
         formData.append("parse_mode", "HTML");
@@ -329,7 +347,7 @@
             const result = await response.json();
             
             if (result.ok) {
-                alert("✅ Buyurtmangiz muvaffaqiyatli yuborildi! Tez orada hisobingiz to'ldiriladi.");
+                alert("✅ Buyurtmangiz muvaffaqiyatli yuborildi! Chek yuborildi.");
                 goBack();
                 document.getElementById('pubg-id').value = '';
                 document.getElementById('receipt-file').value = '';
@@ -337,7 +355,7 @@
                 document.querySelectorAll('.uc-box').forEach(b => b.classList.remove('selected'));
                 selectedOrder = { uc: '', price: '' }; 
             } else {
-                alert("❌ XATOLIK: Bot Token yoki Chat ID xato kiritilgan!\n\n" + result.description);
+                alert("❌ XATOLIK: Bot Token yoki Chat ID xato kiritilgan!\n\nBot javobi: " + result.description);
             }
         } catch (error) {
             alert("❌ INTERNETDA XATOLIK: Internet uzildi yoki botga ulanib bo'lmadi.\n" + error.message);
@@ -347,6 +365,7 @@
         }
     }
 
+    // Sahifa almashish funksiyalari
     function startPurchase() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('purchase-form').classList.remove('hidden'); }
     function goBack() { document.getElementById('purchase-form').classList.add('hidden'); document.getElementById('main-menu').style.display = 'block'; }
     function openAdmin() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('purchase-form').classList.add('hidden'); document.getElementById('profile-header').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
@@ -356,12 +375,27 @@
         const user = document.getElementById('admin-user').value; const pass = document.getElementById('admin-pass').value;
         if(user === 'admin' && pass === 'admin') {
             document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.remove('hidden');
-            document.getElementById('set-bot-token').value = db.botToken; document.getElementById('set-admin-id').value = db.adminId; document.getElementById('set-card').value = db.cardNumber;
+            document.getElementById('set-bot-token').value = db.botToken; 
+            document.getElementById('set-admin-id').value = db.adminId; 
+            document.getElementById('set-card').value = formatCardNumber(db.cardNumber);
         } else { alert("Login yoki parol xato!"); }
     }
 
-    function saveBotSettings() { db.botToken = document.getElementById('set-bot-token').value.trim(); db.adminId = document.getElementById('set-admin-id').value.trim(); saveData(); alert("Bot sozlamalari saqlandi!"); }
-    function saveCard() { const newCard = document.getElementById('set-card').value; if(newCard.length > 5) { db.cardNumber = newCard; saveData(); alert("Karta raqami saqlandi!"); } }
+    function saveBotSettings() { 
+        db.botToken = document.getElementById('set-bot-token').value.trim(); 
+        db.adminId = document.getElementById('set-admin-id').value.trim(); 
+        saveData(); 
+        alert("Bot sozlamalari saqlandi!"); 
+    }
+    
+    function saveCard() { 
+        const newCard = document.getElementById('set-card').value; 
+        if(newCard.length > 5) { 
+            db.cardNumber = newCard; 
+            saveData(); 
+            alert("Karta raqami saqlandi!"); 
+        } 
+    }
     
     function addUCPackage() {
         const uc = document.getElementById('new-uc-amount').value; const price = document.getElementById('new-uc-price').value;
