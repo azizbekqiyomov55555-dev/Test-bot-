@@ -17,8 +17,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import CommandStart, Command
 
 # ================== SOZLAMALAR ==================
-BOT_TOKEN = "8761980099:AAEPFSVejgsxZxJkcUAFubNIlPp5nLR2MEE"
-ADMIN_ID = 8284924038
+BOT_TOKEN = "8774887114:AAFmtp95ZmSn9Owke0iAvo61a2FfZaOtGvM"
+ADMIN_ID = 8537782289
 MAIN_CHANNEL_ID = "@sevaraakkk"
 # ================================================
 
@@ -564,7 +564,7 @@ async def get_phone(message: Message, state: FSMContext):
             f"💰 Narxi: {data['price']} so'm\n"
             f"📞 Tel: {message.text}\n\n"
             f"➖➖➖➖➖➖➖➖➖➖\n"
-            f"👨‍💻 Admin: @SHIRINA_10K\n"
+            f"👨‍💻 Admin: @SEVARA_20o5\n"
             f"🤖 Botimiz: @{me.username}")
 
     ad_id = db_query("INSERT INTO ads (user_id, video_id, text) VALUES (?, ?, ?)",
