@@ -242,10 +242,14 @@
 
 
     async function fetchDatabase() {
+        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
         try {
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                headers: { 'X-Master-Key': API_KEY }
-            });
+            const response = await Promise.race([
+                fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                }),
+                timeout
+            ]);
             const data = await response.json();
             if (data.record) {
                 db = data.record; 
@@ -255,7 +259,7 @@
             }
         } catch (error) {
             console.error("Xato:", error);
-            db = JSON.parse(localStorage.getItem('uc_db')) || db; 
+            try { db = JSON.parse(localStorage.getItem('uc_db')) || db; } catch(e) {}
         }
         initAppUI();
     }
@@ -276,4 +280,220 @@
             localStorage.setItem('uc_db', JSON.stringify(db)); 
             updateUI();
             if(btnElement) alert("✅ Muvaffaqiyatli saqlandi!");
-     
+        } catch (error) {
+            alert("❌ İnternetga saqlashda xatolik yuz berdi!");
+        }
+        if(btnElement) { btnElement.innerText = originalText; btnElement.style.pointerEvents = "auto"; }
+    }
+
+    function initAppUI() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('app-container').classList.remove('hidden');
+        updateUI();
+        try { const tg = window.Telegram.WebApp; tg.ready(); tg.expand(); const user = tg.initDataUnsafe?.user; if (user && user.photo_url) document.getElementById('user-profile-img').src = user.photo_url; } catch (e) {}
+    }
+
+    function updateUI() {
+        document.getElementById('card-number').innerText = formatCardNumber(db.cardNumber);
+        document.getElementById('link-instagram').href = db.social.instagram || '#';
+        document.getElementById('link-youtube').href = db.social.youtube || '#';
+        document.getElementById('link-telegram').href = db.social.telegram || '#';
+        renderAdminLists();
+    }
+
+    function formatCardNumber(value) {
+        let v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let matches = v.match(/\d{4,16}/g);
+        let match = matches && matches[0] || ''; let parts =[];
+        for (let i = 0, len = match.length; i < len; i += 4) { parts.push(match.substring(i, i + 4)); }
+        return parts.length ? parts.join(' ') : value;
+    }
+    function formatInputCard(element) { element.value = formatCardNumber(element.value); }
+    
+
+    function openForm(category) {
+        currentCategory = category;
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('purchase-form').classList.remove('hidden');
+        document.getElementById('payment-step').classList.add('hidden');
+        selectedOrder = { item: '', price: '' };
+        document.getElementById('user-input').value = '';
+        document.getElementById('receipt-file').value = '';
+
+        const title = document.getElementById('form-title');
+        const inputLabel = document.getElementById('input-label');
+        const userInput = document.getElementById('user-input');
+        const gridLabel = document.getElementById('grid-label');
+
+        if(category === 'uc') {
+            title.innerText = "UC SOTIB OLISH"; title.style.color = "#00bfff";
+            inputLabel.innerHTML = `<i class="fa-solid fa-id-card mr-1"></i> PUBG ID RAQAM`;
+            userInput.placeholder = "5123456789"; userInput.type = "number";
+            gridLabel.innerHTML = `<i class="fa-solid fa-coins mr-1"></i> UC TANLANG`;
+        } else if(category === 'premium') {
+            title.innerText = "TELEGRAM PREMIUM"; title.style.color = "#8a2be2";
+            inputLabel.innerHTML = `<i class="fa-brands fa-telegram mr-1"></i> TELEGRAM USERNAME`;
+            userInput.placeholder = "@username"; userInput.type = "text";
+            gridLabel.innerHTML = `<i class="fa-solid fa-star mr-1"></i> MUDDATNI TANLANG`;
+        } else if(category === 'stars') {
+            title.innerText = "TELEGRAM STARS"; title.style.color = "#ff8a00";
+            inputLabel.innerHTML = `<i class="fa-brands fa-telegram mr-1"></i> TELEGRAM USERNAME`;
+            userInput.placeholder = "@username"; userInput.type = "text";
+            gridLabel.innerHTML = `<i class="fa-solid fa-star-half-stroke mr-1"></i> STARS MIQDORINI TANLANG`;
+        }
+        renderItemsGrid();
+    }
+
+    function renderItemsGrid() {
+        const grid = document.getElementById('item-grid'); grid.innerHTML = '';
+        let list =[]; let label = "";
+        
+        if(currentCategory === 'uc') { list = db.ucPackages ||[]; label = "UC"; }
+        else if(currentCategory === 'premium') { list = db.premiumPackages ||[]; label = ""; }
+        else if(currentCategory === 'stars') { list = db.starsPackages ||[]; label = "★"; }
+
+        list.forEach(pkg => {
+            grid.innerHTML += `<div class="uc-box p-4 rounded-xl text-center play-sound" onclick="selectItem(this, '${pkg.amount}', '${pkg.price}')">
+                <div class="text-2xl font-black text-white">${pkg.amount} <span class="text-xs font-normal text-yellow-400">${label}</span></div>
+                <div class="text-sm text-gray-400 mt-1 font-bold">${pkg.price} so'm</div>
+            </div>`;
+        });
+    }
+
+    function selectItem(element, amount, price) {
+        document.querySelectorAll('.uc-box').forEach(box => box.classList.remove('selected'));
+        element.classList.add('selected'); selectedOrder.item = amount; selectedOrder.price = price;
+        document.getElementById('display-price').innerText = price;
+        document.getElementById('payment-step').classList.remove('hidden');
+        setTimeout(() => document.getElementById('payment-step').scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+
+    function copyCard() {
+        let cardText = document.getElementById('card-number').innerText.replace(/\s+/g, '');
+        navigator.clipboard.writeText(cardText).then(() => {
+            let msg = document.getElementById('copy-msg'); msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 2000);
+        });
+    }
+
+    async function submitOrder() {
+        const inputVal = document.getElementById('user-input').value.trim();
+        const fileInput = document.getElementById('receipt-file').files[0];
+        const btn = document.getElementById('submit-btn');
+
+        if(!inputVal) return alert("Iltimos, ma'lumotlarni to'ldiring!");
+        if(!selectedOrder.item) return alert("Iltimos, paketni tanlang!");
+        if(!fileInput) return alert("Iltimos, to'lov chekini yuklang!");
+        if(!db.botToken || !db.adminId) return alert("⚠️ Admin panelda Bot Token kiritilmagan!");
+
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> YUBORILMOQDA...`;
+        btn.style.pointerEvents = 'none';
+
+        const now = new Date();
+        const timeString = now.toLocaleDateString('uz-UZ') + " " + now.toLocaleTimeString('uz-UZ');
+        const orderId = Math.floor(100000 + Math.random() * 900000); 
+        
+        let telegramUser = "";
+        try { const user = window.Telegram.WebApp.initDataUnsafe?.user; if (user) telegramUser = `\n👤 <b>Mijoz:</b> <a href="tg://user?id=${user.id}">${user.first_name}</a>`; } catch(e) {}
+
+        let caption = `🛒 <b>YANGI BUYURTMA! (#${orderId})</b>\n\n`;
+        if (currentCategory === 'uc') { caption += `🆔 <b>PUBG ID:</b> <code>${inputVal}</code>\n`; caption += `💎 <b>Xarid:</b> ${selectedOrder.item} UC\n`; } 
+        else if (currentCategory === 'premium') { caption += `👤 <b>Username:</b> ${inputVal}\n`; caption += `🌟 <b>Xarid:</b> Telegram Premium (${selectedOrder.item})\n`; } 
+        else if (currentCategory === 'stars') { caption += `👤 <b>Username:</b> ${inputVal}\n`; caption += `⭐ <b>Xarid:</b> ${selectedOrder.item} Stars\n`; }
+
+        caption += `💰 <b>Summa:</b> ${selectedOrder.price} UZS\n⏰ <b>Vaqti:</b> ${timeString}` + telegramUser;
+
+        const formData = new FormData();
+        formData.append("chat_id", db.adminId.trim());
+        formData.append("photo", fileInput);
+        formData.append("caption", caption);
+        formData.append("parse_mode", "HTML");
+
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${db.botToken.trim()}/sendPhoto`, { method: "POST", body: formData });
+            const result = await response.json();
+            if (result.ok) {
+                alert("✅ Buyurtmangiz muvaffaqiyatli yuborildi!"); goBack();
+                document.getElementById('user-input').value = ''; document.getElementById('receipt-file').value = '';
+                document.getElementById('payment-step').classList.add('hidden');
+                document.querySelectorAll('.uc-box').forEach(b => b.classList.remove('selected'));
+                selectedOrder = { item: '', price: '' }; 
+            } else { alert("❌ XATOLIK: " + result.description); }
+        } catch (error) { alert("❌ INTERNETDA XATOLIK!"); } 
+        finally { btn.innerHTML = `<div class="btn-line line-top"></div>TASDIQLASH VA YUBORISH<div class="btn-line line-bottom"></div>`; btn.style.pointerEvents = 'auto'; }
+    }
+
+    async function testBotConnection() {
+        const token = document.getElementById('set-bot-token').value.trim(); const chatId = document.getElementById('set-admin-id').value.trim();
+        const testBtn = document.getElementById('test-bot-btn');
+        if (!token || !chatId) return alert("Iltimos, avval Bot Token va Chat ID ni kiriting!");
+        testBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`; testBtn.style.pointerEvents = 'none';
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: "✅ <b>Tabriklaymiz!</b> Saytingiz botga muvaffaqiyatli ulandi!", parse_mode: "HTML" }) });
+            const result = await response.json();
+            if (result.ok) { alert("✅ Bot muvaffaqiyatli ulandi!"); db.botToken = token; db.adminId = chatId; saveData(document.getElementById('btn-save-bot')); } 
+            else { alert("❌ XATOLIK: " + result.description); }
+        } catch (error) { alert("❌ INTERNETDA MUAMMO!"); } 
+        finally { testBtn.innerHTML = `TEKSHIRISH`; testBtn.style.pointerEvents = 'auto'; }
+    }
+
+    function goBack() { document.getElementById('purchase-form').classList.add('hidden'); document.getElementById('main-menu').style.display = 'block'; }
+    function openAdmin() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('purchase-form').classList.add('hidden'); document.getElementById('profile-header').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
+    function closeAdmin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.add('hidden'); document.getElementById('profile-header').classList.remove('hidden'); document.getElementById('main-menu').style.display = 'block'; }
+
+    function loginAdmin() {
+        const user = document.getElementById('admin-user').value; const pass = document.getElementById('admin-pass').value;
+        if(user === 'Azizbek1' && pass === 'Aziz') {
+            document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.remove('hidden');
+            document.getElementById('set-bot-token').value = db.botToken; document.getElementById('set-admin-id').value = db.adminId; 
+            document.getElementById('set-instagram').value = db.social.instagram; document.getElementById('set-youtube').value = db.social.youtube; document.getElementById('set-telegram').value = db.social.telegram; 
+            document.getElementById('set-card').value = formatCardNumber(db.cardNumber);
+            document.getElementById('admin-user').value = ''; document.getElementById('admin-pass').value = '';
+            renderAdminLists();
+        } else { alert("Login yoki parol xato!"); }
+    }
+
+    function saveBotSettings() { db.botToken = document.getElementById('set-bot-token').value.trim(); db.adminId = document.getElementById('set-admin-id').value.trim(); saveData(document.getElementById('btn-save-bot')); }
+    function saveSocialLinks() { db.social.instagram = document.getElementById('set-instagram').value.trim(); db.social.youtube = document.getElementById('set-youtube').value.trim(); db.social.telegram = document.getElementById('set-telegram').value.trim(); saveData(document.getElementById('btn-save-social')); }
+    function saveCard() { const newCard = document.getElementById('set-card').value; if(newCard.length > 5) { db.cardNumber = newCard; saveData(document.getElementById('btn-save-card')); } }
+
+    function renderAdminLists() {
+        const ucList = document.getElementById('admin-uc-list'); ucList.innerHTML = '';
+        const premList = document.getElementById('admin-prem-list'); premList.innerHTML = '';
+        const starList = document.getElementById('admin-star-list'); starList.innerHTML = '';
+
+        (db.ucPackages ||[]).forEach(pkg => { ucList.innerHTML += `<div class="flex justify-between items-center bg-[#0b0c10] p-3 rounded-lg border border-[#1f222e]"><span class="text-white font-bold">${pkg.amount} UC - <span class="text-[#00bfff]">${pkg.price} UZS</span></span><button onclick="removeItem('uc', ${pkg.id})" class="text-red-500 play-sound"><i class="fa-solid fa-trash"></i></button></div>`; });
+        (db.premiumPackages ||[]).forEach(pkg => { premList.innerHTML += `<div class="flex justify-between items-center bg-[#0b0c10] p-3 rounded-lg border border-[#1f222e]"><span class="text-white font-bold">${pkg.amount} - <span class="text-[#8a2be2]">${pkg.price} UZS</span></span><button onclick="removeItem('premium', ${pkg.id})" class="text-red-500 play-sound"><i class="fa-solid fa-trash"></i></button></div>`; });
+        (db.starsPackages ||[]).forEach(pkg => { starList.innerHTML += `<div class="flex justify-between items-center bg-[#0b0c10] p-3 rounded-lg border border-[#1f222e]"><span class="text-white font-bold">${pkg.amount} Stars - <span class="text-[#ff8a00]">${pkg.price} UZS</span></span><button onclick="removeItem('stars', ${pkg.id})" class="text-red-500 play-sound"><i class="fa-solid fa-trash"></i></button></div>`; });
+    }
+
+    function addItem(type) {
+        let amountId = '', priceId = '', targetArray = '';
+        if(type === 'uc') { amountId = 'new-uc-amount'; priceId = 'new-uc-price'; targetArray = 'ucPackages'; }
+        else if(type === 'premium') { amountId = 'new-prem-amount'; priceId = 'new-prem-price'; targetArray = 'premiumPackages'; }
+        else if(type === 'stars') { amountId = 'new-star-amount'; priceId = 'new-star-price'; targetArray = 'starsPackages'; }
+
+        const amount = document.getElementById(amountId).value.trim();
+        const price = document.getElementById(priceId).value.trim();
+
+        if(!amount || !price) return alert("Iltimos, ma'lumotlarni to'liq kiriting!");
+        
+        db[targetArray].push({ id: Date.now(), amount: amount, price: price });
+        document.getElementById(amountId).value = ''; document.getElementById(priceId).value = '';
+        saveData(); 
+    }
+
+    function removeItem(type, id) {
+        let targetArray = '';
+        if(type === 'uc') targetArray = 'ucPackages';
+        else if(type === 'premium') targetArray = 'premiumPackages';
+        else if(type === 'stars') targetArray = 'starsPackages';
+
+        db[targetArray] = db[targetArray].filter(pkg => pkg.id !== id);
+        saveData();
+    }
+
+    fetchDatabase();
+</script>
+</body>
+</html>
