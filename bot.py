@@ -125,26 +125,66 @@ async def check_subscription(user_id):
 
 # ================== ASOSIY MENU — RANGLI REPLYKEYBOARD ==================
 # Bot API 9.4 — style parametri:
-#   'primary'  → KO'K  rang
-#   'success'  → YASHIL rang
-#   'danger'   → QIZIL rang
-def get_main_menu():
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [
-                # Ko'k rang — primary
-                KeyboardButton(text="📝 E'lon berish", style="primary"),
-                # Qizil rang — danger
-                KeyboardButton(text="🆘 Yordam", style="danger"),
-            ],
-            [
-                # Yashil rang — success (keng tugma)
-                KeyboardButton(text="🎮 PUBG MOBILE UC OLISH 💎", style="success"),
-            ]
+#   'primary'     → KO'K  rang
+#   'success'     → YASHIL rang
+#   'danger'      → QIZIL rang
+#
+# user_id berilsa va ADMIN_ID ga teng bo'lsa → "🔧 Boshqarish" tugmasi ko'rinadi
+def get_main_menu(user_id=None):
+    keyboard = [
+        [
+            KeyboardButton(text="📝 E'lon berish", style="primary"),
+            KeyboardButton(text="🆘 Yordam", style="danger"),
         ],
+        [
+            KeyboardButton(text="🎮 PUBG MOBILE UC OLISH 💎", style="success"),
+        ]
+    ]
+    # Faqat adminga "Boshqarish" tugmasi ko'rinadi
+    if user_id == ADMIN_ID:
+        keyboard.append([
+            KeyboardButton(text="🔧 Boshqarish", style="primary")
+        ])
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
         resize_keyboard=True,
         is_persistent=True,
         input_field_placeholder="Quyidagi tugmalardan birini tanlang 👇"
+    )
+
+# ================== ADMIN MENU — REPLYKEYBOARD ==================
+def get_admin_menu():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text="📊 Statistika", style="primary"),
+                KeyboardButton(text="📦 UC buyurtmalar", style="primary"),
+            ],
+            [
+                KeyboardButton(text="💰 Narx o'zgartirish", style="primary"),
+                KeyboardButton(text="💳 Karta o'zgartirish", style="primary"),
+            ],
+            [
+                KeyboardButton(text="📝 Start xabar", style="primary"),
+            ],
+            [
+                KeyboardButton(text="➕ Kanal qo'shish", style="success"),
+                KeyboardButton(text="➖ Kanal o'chirish", style="danger"),
+            ],
+            [
+                KeyboardButton(text="💎 UC narxi qo'shish", style="success"),
+                KeyboardButton(text="📋 UC narxlari", style="primary"),
+            ],
+            [
+                KeyboardButton(text="💳 UC karta", style="primary"),
+            ],
+            [
+                KeyboardButton(text="🔙 Asosiy menyu", style="danger"),
+            ],
+        ],
+        resize_keyboard=True,
+        is_persistent=True,
+        input_field_placeholder="⚙️ Admin panel 👇"
     )
 
 # ================== UC NARXLARI INLINE KLAVIATURA ==================
@@ -213,7 +253,7 @@ async def start_cmd(message: Message, state: FSMContext):
 
     start_text = get_setting('start_msg').replace("{name}", message.from_user.full_name)
     id_text = f"\n\n🆔 Sizning Telegram ID: <code>{message.from_user.id}</code>\n(To'lov sahifasida shu ID ni kiriting)"
-    await message.answer(start_text + id_text, reply_markup=get_main_menu(), parse_mode="HTML")
+    await message.answer(start_text + id_text, reply_markup=get_main_menu(message.from_user.id), parse_mode="HTML")
 
 @router.callback_query(F.data == "check_sub")
 async def check_sub_cb(call: CallbackQuery):
@@ -223,7 +263,10 @@ async def check_sub_cb(call: CallbackQuery):
     else:
         await call.message.delete()
         start_text = get_setting('start_msg').replace("{name}", call.from_user.full_name)
-        await call.message.answer(f"Rahmat! Obuna tasdiqlandi.\n\n{start_text}", reply_markup=get_main_menu())
+        await call.message.answer(
+            f"Rahmat! Obuna tasdiqlandi.\n\n{start_text}",
+            reply_markup=get_main_menu(call.from_user.id)
+        )
 
 # ================== MENU HANDLERLAR ==================
 @router.message(F.text == "📝 E'lon berish")
@@ -410,7 +453,7 @@ async def get_uc_receipt(message: Message, state: FSMContext):
         f"⏳ Admin chekni ko'rib chiqib, UC ni tez orada yuboradi.\n"
         f"📞 Savollar bo'lsa: 🆘 Yordam tugmasini bosing.",
         parse_mode="HTML",
-        reply_markup=get_main_menu()
+        reply_markup=get_main_menu(message.from_user.id)
     )
     await state.clear()
 
@@ -439,7 +482,7 @@ async def uc_approve_cb(call: CallbackQuery):
             f"O'yiningizni oching va UC ni tekshiring.\n\n"
             f"🙏 Xarid uchun rahmat!",
             parse_mode="HTML",
-            reply_markup=get_main_menu()
+            reply_markup=get_main_menu(user_id)
         )
     
     caption = call.message.caption or ""
@@ -468,7 +511,7 @@ async def uc_reject_cb(call: CallbackQuery):
         "To'lov cheki tasdiqlanmadi. Iltimos, qayta urinib ko'ring yoki "
         "🆘 Yordam orqali admin bilan bog'laning.",
         parse_mode="HTML",
-        reply_markup=get_main_menu()
+        reply_markup=get_main_menu(user_id)
     )
     
     caption = call.message.caption or ""
@@ -504,7 +547,10 @@ async def get_receipt(message: Message, state: FSMContext):
                 f"Foydalanuvchi: {message.from_user.full_name} (@{message.from_user.username})\n"
                 f"ID: {message.from_user.id}",
         reply_markup=btn)
-    await message.answer("Chek adminga yuborildi. Tasdiqlanishini kuting.", reply_markup=get_main_menu())
+    await message.answer(
+        "Chek adminga yuborildi. Tasdiqlanishini kuting.",
+        reply_markup=get_main_menu(message.from_user.id)
+    )
     await state.clear()
 
 # ================== E'LON BERISH BOSQICHLARI ==================
@@ -581,7 +627,7 @@ async def get_phone(message: Message, state: FSMContext):
         reply_markup=btn)
     await message.answer(
         "Ma'lumotlaringiz adminga yuborildi. Tasdiqlanganidan so'ng kanalga joylanadi.",
-        reply_markup=get_main_menu())
+        reply_markup=get_main_menu(message.from_user.id))
     await state.clear()
 
 # ================== YORDAM (SUPPORT) ==================
@@ -595,7 +641,10 @@ async def send_support(message: Message, state: FSMContext):
         f"Kimdan: {message.from_user.full_name} (ID: {message.from_user.id})\n\n"
         f"Xabar: {message.text}",
         reply_markup=btn)
-    await message.answer("Xabaringiz adminga yetkazildi.", reply_markup=get_main_menu())
+    await message.answer(
+        "Xabaringiz adminga yetkazildi.",
+        reply_markup=get_main_menu(message.from_user.id)
+    )
     await state.clear()
 
 # ================== ADMIN TO'LOV CALLBACKLAR ==================
@@ -603,16 +652,22 @@ async def send_support(message: Message, state: FSMContext):
 async def approve_pay(call: CallbackQuery):
     user_id = int(call.data.split("_")[2])
     db_query("UPDATE users SET paid_slots = paid_slots + 1 WHERE user_id=?", (user_id,))
-    await bot.send_message(user_id,
+    await bot.send_message(
+        user_id,
         "✅ To'lovingiz admin tomonidan tasdiqlandi!\n"
         "Endi yana e'lon joylashingiz mumkin.",
-        reply_markup=get_main_menu())
+        reply_markup=get_main_menu(user_id)
+    )
     await call.message.edit_caption(caption=call.message.caption + "\n\n✅ TASDIQLANGAN")
 
 @router.callback_query(F.data.startswith("rej_pay_"))
 async def reject_pay(call: CallbackQuery):
     user_id = int(call.data.split("_")[2])
-    await bot.send_message(user_id, "❌ To'lovingiz admin tomonidan bekor qilindi.", reply_markup=get_main_menu())
+    await bot.send_message(
+        user_id,
+        "❌ To'lovingiz admin tomonidan bekor qilindi.",
+        reply_markup=get_main_menu(user_id)
+    )
     await call.message.edit_caption(caption=call.message.caption + "\n\n❌ BEKOR QILINGAN")
 
 # ================== ADMIN E'LON CALLBACKLAR ==================
@@ -638,7 +693,7 @@ async def approve_ad(call: CallbackQuery):
         await bot.send_video(MAIN_CHANNEL_ID, video=video_id, caption=text, reply_markup=btn)
     except Exception as e:
         await call.answer(f"❌ Kanalga yuborishda XATO:\n{e}", show_alert=True)
-        return  # Muvaffaqiyatsiz bo'lsa to'xtaymiz
+        return
 
     # 2) DB yangilash
     db_query("UPDATE users SET posted_ads = posted_ads + 1, pending_approval=0 WHERE user_id=?", (user_id,))
@@ -646,9 +701,13 @@ async def approve_ad(call: CallbackQuery):
 
     # 3) Sotuvchiga xabar
     try:
-        await bot.send_message(user_id, "✅ E'loningiz kanalga joylandi!", reply_markup=get_main_menu())
+        await bot.send_message(
+            user_id,
+            "✅ E'loningiz kanalga joylandi!",
+            reply_markup=get_main_menu(user_id)
+        )
     except Exception:
-        pass  # Foydalanuvchi botni bloklagan bo'lishi mumkin
+        pass
 
     # 4) Admin xabarini yangilash
     try:
@@ -675,7 +734,11 @@ async def reject_ad(call: CallbackQuery):
     db_query("UPDATE users SET pending_approval=0 WHERE user_id=?", (ad[0],))
 
     try:
-        await bot.send_message(ad[0], "❌ E'loningiz admin tomonidan rad etildi.", reply_markup=get_main_menu())
+        await bot.send_message(
+            ad[0],
+            "❌ E'loningiz admin tomonidan rad etildi.",
+            reply_markup=get_main_menu(ad[0])
+        )
     except Exception:
         pass
 
@@ -868,39 +931,140 @@ async def send_reply(message: Message, state: FSMContext):
     await message.answer("Javob yuborildi.")
     await state.clear()
 
-# ================== ADMIN PANEL ==================
+# ================== ADMIN PANEL — /admin BUYRUQ ==================
 @router.message(Command("admin"), F.from_user.id == ADMIN_ID)
-async def admin_panel(message: Message):
+async def admin_panel_cmd(message: Message):
+    await message.answer(
+        "⚙️ <b>Admin panelga xush kelibsiz!</b>\n\nQuyidagi tugmalardan birini tanlang:",
+        reply_markup=get_admin_menu(),
+        parse_mode="HTML"
+    )
+
+# ================== 🔧 BOSHQARISH TUGMASI — faqat adminga ko'rinadi ==================
+@router.message(F.text == "🔧 Boshqarish", F.from_user.id == ADMIN_ID)
+async def admin_panel_btn(message: Message):
+    await message.answer(
+        "⚙️ <b>Admin panelga xush kelibsiz!</b>\n\nQuyidagi tugmalardan birini tanlang:",
+        reply_markup=get_admin_menu(),
+        parse_mode="HTML"
+    )
+
+# ================== ADMIN MENYU TUGMALARI — TEXT HANDLERLAR ==================
+
+# 🔙 Asosiy menyu
+@router.message(F.text == "🔙 Asosiy menyu", F.from_user.id == ADMIN_ID)
+async def admin_back_main(message: Message):
+    await message.answer(
+        "✅ Asosiy menyuga qaytdingiz.",
+        reply_markup=get_main_menu(message.from_user.id)
+    )
+
+# 📊 Statistika
+@router.message(F.text == "📊 Statistika", F.from_user.id == ADMIN_ID)
+async def admin_stats_btn(message: Message):
+    await message.answer("⏳ Statistika tayyorlanmoqda, kuting...")
+    bio = generate_stats_image()
+    file = BufferedInputFile(bio.read(), filename="stats.png")
+    await bot.send_photo(
+        message.from_user.id,
+        photo=file,
+        caption="📈 Botning to'liq statistikasi (TOP 30 foydalanuvchi)"
+    )
+
+# 📦 UC buyurtmalar
+@router.message(F.text == "📦 UC buyurtmalar", F.from_user.id == ADMIN_ID)
+async def admin_uc_orders_btn(message: Message):
+    orders = db_query(
+        "SELECT id, full_name, uc_amount, price, status, order_date FROM uc_orders ORDER BY id DESC LIMIT 20",
+        fetchall=True
+    )
+    if not orders:
+        await message.answer("📦 Hozircha UC buyurtmalar yo'q.")
+        return
+    text = "📦 <b>OXIRGI 20 UC BUYURTMA:</b>\n\n"
+    for oid, name, uc_amount, price, status, date in orders:
+        emoji = "⏳" if status == "pending" else ("✅" if status == "approved" else "❌")
+        text += f"{emoji} #{oid} | {name} | {uc_amount} UC | {price:,} so'm | {date}\n".replace(",", " ")
+    await message.answer(text, parse_mode="HTML")
+
+# 💰 Narx o'zgartirish
+@router.message(F.text == "💰 Narx o'zgartirish", F.from_user.id == ADMIN_ID)
+async def admin_price_btn(message: Message, state: FSMContext):
+    await message.answer("Yangi narxni kiriting (faqat raqam):")
+    await state.set_state(AdminForm.price)
+
+@router.message(AdminForm.price)
+async def save_price(message: Message, state: FSMContext):
+    db_query("UPDATE settings SET value=? WHERE key='price'", (message.text,))
+    await message.answer("✅ Narx yangilandi!", reply_markup=get_admin_menu())
+    await state.clear()
+
+# 💳 Karta o'zgartirish
+@router.message(F.text == "💳 Karta o'zgartirish", F.from_user.id == ADMIN_ID)
+async def admin_card_btn(message: Message, state: FSMContext):
+    await message.answer("Yangi karta raqamini kiriting:")
+    await state.set_state(AdminForm.card)
+
+@router.message(AdminForm.card)
+async def save_card(message: Message, state: FSMContext):
+    db_query("UPDATE settings SET value=? WHERE key='card'", (message.text,))
+    await message.answer("✅ Karta yangilandi!", reply_markup=get_admin_menu())
+    await state.clear()
+
+# 📝 Start xabar
+@router.message(F.text == "📝 Start xabar", F.from_user.id == ADMIN_ID)
+async def admin_startmsg_btn(message: Message, state: FSMContext):
+    await message.answer("Yangi start xabarini kiriting. (Foydalanuvchi ismi uchun {name} ishlating):")
+    await state.set_state(AdminForm.start_msg)
+
+@router.message(AdminForm.start_msg)
+async def save_start(message: Message, state: FSMContext):
+    db_query("UPDATE settings SET value=? WHERE key='start_msg'", (message.text,))
+    await message.answer("✅ Start xabar yangilandi!", reply_markup=get_admin_menu())
+    await state.clear()
+
+# ➕ Kanal qo'shish
+@router.message(F.text == "➕ Kanal qo'shish", F.from_user.id == ADMIN_ID)
+async def admin_add_ch_btn(message: Message, state: FSMContext):
+    await message.answer("Kanal ID sini kiriting (masalan: @kanal_useri yoki -100123...):")
+    await state.set_state(AdminForm.add_channel_id)
+
+@router.message(AdminForm.add_channel_id)
+async def add_ch_url(message: Message, state: FSMContext):
+    await state.update_data(ch_id=message.text)
+    await message.answer("Kanal ssilkasini kiriting (https://t.me/...):")
+    await state.set_state(AdminForm.add_channel_url)
+
+@router.message(AdminForm.add_channel_url)
+async def save_ch(message: Message, state: FSMContext):
+    data = await state.get_data()
+    db_query("INSERT INTO channels (channel_id, url) VALUES (?, ?)", (data['ch_id'], message.text))
+    await message.answer("✅ Kanal qo'shildi!", reply_markup=get_admin_menu())
+    await state.clear()
+
+# ➖ Kanal o'chirish
+@router.message(F.text == "➖ Kanal o'chirish", F.from_user.id == ADMIN_ID)
+async def admin_del_ch_btn(message: Message):
+    channels = db_query("SELECT id, channel_id FROM channels", fetchall=True)
+    if not channels:
+        await message.answer("Kanallar yo'q.")
+        return
     btn = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📊 Statistika (Rasmli)", callback_data="admin_stats", style="primary")],
-        [
-            InlineKeyboardButton(text="💰 Narxni o'zgartirish", callback_data="admin_price", style="primary"),
-            InlineKeyboardButton(text="💳 Kartani o'zgartirish", callback_data="admin_card", style="primary"),
-        ],
-        [InlineKeyboardButton(text="📝 Start xabarni o'zgartirish", callback_data="admin_startmsg", style="primary")],
-        [
-            InlineKeyboardButton(text="➕ Kanal qo'shish", callback_data="admin_add_ch", style="success"),
-            InlineKeyboardButton(text="➖ Kanal o'chirish", callback_data="admin_del_ch", style="danger"),
-        ],
-        # ===== UC SOZLAMALARI =====
-        [InlineKeyboardButton(text="━━━━ 💎 UC SOZLAMALARI ━━━━", callback_data="uc_settings_title")],
-        [InlineKeyboardButton(text="➕ UC narxi kiritish", callback_data="admin_add_uc_price", style="success")],
-        [
-            InlineKeyboardButton(text="📋 UC narxlari ro'yxati", callback_data="admin_uc_list", style="primary"),
-            InlineKeyboardButton(text="💳 UC karta o'zgartirish", callback_data="admin_uc_card", style="primary"),
-        ],
-        [InlineKeyboardButton(text="📦 UC buyurtmalar", callback_data="admin_uc_orders", style="primary")],
+        [InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}")]
+        for ch in channels
     ])
-    await message.answer("⚙️ Admin panelga xush kelibsiz!", reply_markup=btn)
+    await message.answer("Qaysi kanalni o'chirasiz?", reply_markup=btn)
 
-@router.callback_query(F.data == "uc_settings_title")
-async def uc_settings_title(call: CallbackQuery):
-    await call.answer("💎 UC Sozlamalari bo'limi", show_alert=False)
+@router.callback_query(F.data.startswith("delch_"))
+async def del_ch_action(call: CallbackQuery):
+    c_id = int(call.data.split("_")[1])
+    db_query("DELETE FROM channels WHERE id=?", (c_id,))
+    await call.message.edit_text("✅ Kanal o'chirildi.")
 
-# ================== ADMIN UC NARX KIRITISH ==================
-@router.callback_query(F.data == "admin_add_uc_price")
-async def add_uc_price_step1(call: CallbackQuery, state: FSMContext):
-    await call.message.answer(
+# 💎 UC narxi qo'shish
+@router.message(F.text == "💎 UC narxi qo'shish", F.from_user.id == ADMIN_ID)
+async def admin_add_uc_price_btn(message: Message, state: FSMContext):
+    await message.answer(
         "💎 <b>UC miqdorini kiriting</b>\n\nMasalan: <code>60</code> yoki <code>300</code> yoki <code>600</code>",
         parse_mode="HTML"
     )
@@ -926,27 +1090,30 @@ async def add_uc_price_save(message: Message, state: FSMContext):
     data = await state.get_data()
     uc_amount = data['uc_amount']
     price = int(message.text)
-    
-    # Agar bu UC miqdori allaqachon mavjud bo'lsa yangilaydi
     existing = db_query("SELECT id FROM uc_prices WHERE uc_amount=?", (uc_amount,), fetchone=True)
     if existing:
         db_query("UPDATE uc_prices SET price=? WHERE uc_amount=?", (price, uc_amount))
-        await message.answer(f"✅ <b>{uc_amount} UC</b> narxi yangilandi: <b>{price:,} so'm</b>".replace(",", " "), parse_mode="HTML")
+        await message.answer(
+            f"✅ <b>{uc_amount} UC</b> narxi yangilandi: <b>{price:,} so'm</b>".replace(",", " "),
+            parse_mode="HTML",
+            reply_markup=get_admin_menu()
+        )
     else:
         db_query("INSERT INTO uc_prices (uc_amount, price) VALUES (?, ?)", (uc_amount, price))
-        await message.answer(f"✅ <b>{uc_amount} UC — {price:,} so'm</b> qo'shildi!".replace(",", " "), parse_mode="HTML")
-    
+        await message.answer(
+            f"✅ <b>{uc_amount} UC — {price:,} so'm</b> qo'shildi!".replace(",", " "),
+            parse_mode="HTML",
+            reply_markup=get_admin_menu()
+        )
     await state.clear()
 
-# ================== ADMIN UC NARXLAR RO'YXATI ==================
-@router.callback_query(F.data == "admin_uc_list")
-async def admin_uc_list(call: CallbackQuery):
+# 📋 UC narxlari
+@router.message(F.text == "📋 UC narxlari", F.from_user.id == ADMIN_ID)
+async def admin_uc_list_btn(message: Message):
     prices = db_query("SELECT id, uc_amount, price FROM uc_prices ORDER BY uc_amount ASC", fetchall=True)
-    
     if not prices:
-        await call.message.answer("❌ Hozircha UC narxlari kiritilmagan.\n\nQo'shish uchun: ➕ UC narxi kiritish")
+        await message.answer("❌ Hozircha UC narxlari kiritilmagan.\n\nQo'shish uchun: 💎 UC narxi qo'shish")
         return
-    
     text = "💎 <b>UC NARXLARI RO'YXATI:</b>\n\n"
     rows = []
     for pid, uc_amount, price in prices:
@@ -957,13 +1124,45 @@ async def admin_uc_list(call: CallbackQuery):
                 callback_data=f"del_uc_price_{pid}"
             )
         ])
-    
     rows.append([InlineKeyboardButton(text="🔙 Admin panel", callback_data="back_to_admin")])
     btn = InlineKeyboardMarkup(inline_keyboard=rows)
-    
-    await call.message.answer(text, reply_markup=btn, parse_mode="HTML")
+    await message.answer(text, reply_markup=btn, parse_mode="HTML")
+
+# 💳 UC karta
+@router.message(F.text == "💳 UC karta", F.from_user.id == ADMIN_ID)
+async def admin_uc_card_btn(message: Message, state: FSMContext):
+    current = get_setting('uc_card')
+    await message.answer(
+        f"💳 Hozirgi UC karta:\n<code>{current}</code>\n\nYangi karta raqamini kiriting:",
+        parse_mode="HTML"
+    )
+    await state.set_state(AdminForm.uc_card)
+
+@router.message(AdminForm.uc_card)
+async def save_uc_card(message: Message, state: FSMContext):
+    db_query("INSERT OR REPLACE INTO settings (key, value) VALUES ('uc_card', ?)", (message.text,))
+    await message.answer(
+        f"✅ UC karta yangilandi!\n<code>{message.text}</code>",
+        parse_mode="HTML",
+        reply_markup=get_admin_menu()
+    )
+    await state.clear()
+
+# ================== INLINE CALLBACK — back_to_admin ==================
+@router.callback_query(F.data == "back_to_admin")
+async def back_to_admin(call: CallbackQuery):
+    await call.message.answer(
+        "⚙️ <b>Admin panel:</b>",
+        reply_markup=get_admin_menu(),
+        parse_mode="HTML"
+    )
     await call.answer()
 
+@router.callback_query(F.data == "uc_settings_title")
+async def uc_settings_title(call: CallbackQuery):
+    await call.answer("💎 UC Sozlamalari bo'limi", show_alert=False)
+
+# ================== UC NARX O'CHIRISH CALLBACK ==================
 @router.callback_query(F.data.startswith("del_uc_price_"))
 async def del_uc_price(call: CallbackQuery):
     pid = int(call.data.split("_")[3])
@@ -978,120 +1177,7 @@ async def del_uc_price(call: CallbackQuery):
     else:
         await call.answer("Topilmadi!", show_alert=True)
 
-# ================== ADMIN UC KARTA ==================
-@router.callback_query(F.data == "admin_uc_card")
-async def admin_uc_card_step(call: CallbackQuery, state: FSMContext):
-    current = get_setting('uc_card')
-    await call.message.answer(
-        f"💳 Hozirgi UC karta:\n<code>{current}</code>\n\n"
-        f"Yangi karta raqamini kiriting:",
-        parse_mode="HTML"
-    )
-    await state.set_state(AdminForm.uc_card)
-
-@router.message(AdminForm.uc_card)
-async def save_uc_card(message: Message, state: FSMContext):
-    db_query("INSERT OR REPLACE INTO settings (key, value) VALUES ('uc_card', ?)", (message.text,))
-    await message.answer(f"✅ UC karta yangilandi!\n<code>{message.text}</code>", parse_mode="HTML")
-    await state.clear()
-
-# ================== ADMIN UC BUYURTMALAR ==================
-@router.callback_query(F.data == "admin_uc_orders")
-async def admin_uc_orders(call: CallbackQuery):
-    orders = db_query(
-        "SELECT id, full_name, uc_amount, price, status, order_date FROM uc_orders ORDER BY id DESC LIMIT 20",
-        fetchall=True
-    )
-    
-    if not orders:
-        await call.message.answer("📦 Hozircha UC buyurtmalar yo'q.")
-        await call.answer()
-        return
-    
-    text = "📦 <b>OXIRGI 20 UC BUYURTMA:</b>\n\n"
-    for oid, name, uc_amount, price, status, date in orders:
-        emoji = "⏳" if status == "pending" else ("✅" if status == "approved" else "❌")
-        text += f"{emoji} #{oid} | {name} | {uc_amount} UC | {price:,} so'm | {date}\n".replace(",", " ")
-    
-    await call.message.answer(text, parse_mode="HTML")
-    await call.answer()
-
-@router.callback_query(F.data == "back_to_admin")
-async def back_to_admin(call: CallbackQuery):
-    await admin_panel(call.message)
-    await call.answer()
-
-# ================== ADMIN BOSHQA SOZLAMALAR ==================
-@router.callback_query(F.data == "admin_price")
-async def set_price_step(call: CallbackQuery, state: FSMContext):
-    await call.message.answer("Yangi narxni kiriting (faqat raqam):")
-    await state.set_state(AdminForm.price)
-
-@router.message(AdminForm.price)
-async def save_price(message: Message, state: FSMContext):
-    db_query("UPDATE settings SET value=? WHERE key='price'", (message.text,))
-    await message.answer("✅ Narx yangilandi!")
-    await state.clear()
-
-@router.callback_query(F.data == "admin_card")
-async def set_card_step(call: CallbackQuery, state: FSMContext):
-    await call.message.answer("Yangi karta raqamini kiriting:")
-    await state.set_state(AdminForm.card)
-
-@router.message(AdminForm.card)
-async def save_card(message: Message, state: FSMContext):
-    db_query("UPDATE settings SET value=? WHERE key='card'", (message.text,))
-    await message.answer("✅ Karta yangilandi!")
-    await state.clear()
-
-@router.callback_query(F.data == "admin_startmsg")
-async def set_start_step(call: CallbackQuery, state: FSMContext):
-    await call.message.answer("Yangi start xabarini kiriting. (Foydalanuvchi ismi uchun {name} ishlating):")
-    await state.set_state(AdminForm.start_msg)
-
-@router.message(AdminForm.start_msg)
-async def save_start(message: Message, state: FSMContext):
-    db_query("UPDATE settings SET value=? WHERE key='start_msg'", (message.text,))
-    await message.answer("✅ Start xabar yangilandi!")
-    await state.clear()
-
-@router.callback_query(F.data == "admin_add_ch")
-async def add_ch_step(call: CallbackQuery, state: FSMContext):
-    await call.message.answer("Kanal ID sini kiriting (masalan: @kanal_useri yoki -100123...):")
-    await state.set_state(AdminForm.add_channel_id)
-
-@router.message(AdminForm.add_channel_id)
-async def add_ch_url(message: Message, state: FSMContext):
-    await state.update_data(ch_id=message.text)
-    await message.answer("Kanal ssilkasini kiriting (https://t.me/...):")
-    await state.set_state(AdminForm.add_channel_url)
-
-@router.message(AdminForm.add_channel_url)
-async def save_ch(message: Message, state: FSMContext):
-    data = await state.get_data()
-    db_query("INSERT INTO channels (channel_id, url) VALUES (?, ?)", (data['ch_id'], message.text))
-    await message.answer("✅ Kanal qo'shildi!")
-    await state.clear()
-
-@router.callback_query(F.data == "admin_del_ch")
-async def del_ch_step(call: CallbackQuery):
-    channels = db_query("SELECT id, channel_id FROM channels", fetchall=True)
-    if not channels:
-        await call.message.answer("Kanallar yo'q.")
-        return
-    btn = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}")]
-        for ch in channels
-    ])
-    await call.message.answer("Qaysi kanalni o'chirasiz?", reply_markup=btn)
-
-@router.callback_query(F.data.startswith("delch_"))
-async def del_ch_action(call: CallbackQuery):
-    c_id = int(call.data.split("_")[1])
-    db_query("DELETE FROM channels WHERE id=?", (c_id,))
-    await call.message.edit_text("✅ Kanal o'chirildi.")
-
-# ================== STATISTIKA ==================
+# ================== STATISTIKA GENERATSIYA ==================
 def generate_stats_image():
     users = db_query("SELECT user_id, full_name, join_date, posted_ads FROM users ORDER BY posted_ads DESC", fetchall=True)
     total_users = len(users)
@@ -1137,6 +1223,7 @@ def generate_stats_image():
     bio.seek(0)
     return bio
 
+# ================== STATISTIKA CALLBACK (inline orqali ham ishlaydi) ==================
 @router.callback_query(F.data == "admin_stats")
 async def send_stats_img(call: CallbackQuery):
     await call.message.answer("Statistika tayyorlanmoqda, kuting...")
