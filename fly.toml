@@ -1,0 +1,15 @@
+app = "test-bot-uz"
+primary_region = "ams"
+
+[build]
+
+[[mounts]]
+  source = "bot_data"
+  destination = "/app/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"
+  cpus = 1
+
+# Bu Telegram bot — HTTP server emas, shuning uchun [http_service] yo'q
