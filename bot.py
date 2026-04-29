@@ -17,8 +17,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import CommandStart, Command
 
 # ================== SOZLAMALAR ==================
-BOT_TOKEN = "8774887114:AAFmtp95ZmSn9Owke0iAvo61a2FfZaOtGvM"
-ADMIN_ID = 7767125394
+BOT_TOKEN = "8754943455:AAF9epI3TVDOHy-U9FGaPxxU7cOjZ7MVufg"
+ADMIN_ID = 8537782289
 MAIN_CHANNEL_ID = "@sevaraakkk"
 # ================================================
 
